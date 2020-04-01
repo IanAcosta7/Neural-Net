@@ -1,7 +1,6 @@
 package com.company;
 
 import com.company.neuralnet.*;
-import org.ejml.simple.SimpleMatrix;
 
 public class Main {
 
@@ -15,7 +14,6 @@ public class Main {
         double[][] outputs = {
                 {0, 1, 1, 0}
         };
-
         Perceptron net = new Perceptron();
 
         net.setInputs(inputs);

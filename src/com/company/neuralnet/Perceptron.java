@@ -3,13 +3,16 @@ package com.company.neuralnet;
 import org.ejml.equation.Equation;
 import org.ejml.simple.*;
 import java.util.Random;
-import org.ejml.simple.*;
 
 public final class Perceptron {
 
     private double[][] inputs;
     private double[][] outputs;
-    private double[][] weights = {{0}, {0}, {0}};
+    private double[][] weights = {
+            {0},
+            {0},
+            {0}
+    };
 
     public Perceptron () {
         Random rand = new Random();
@@ -17,11 +20,6 @@ public final class Perceptron {
         for (int i = 0; i < 3; i++) {
             weights[i][0] = (2 * rand.nextDouble()) - 1;
         }
-        /*double[][] weights = {
-                {(2 * rand.nextDouble()) - 1},
-                {(2 * rand.nextDouble()) - 1},
-                {(2 * rand.nextDouble()) - 1}
-        };*/
     }
 
     // GETTERS
@@ -45,6 +43,10 @@ public final class Perceptron {
         return SimpleMatrix.wrap(eq.lookupMatrix("r"));   //  which returns another matrix
     }
 
+    public SimpleMatrix sigmoidDerivative (SimpleMatrix x) {
+        return normalMultiplication(x, x.negative().plus(1));
+    }
+
     public void train () {
         SimpleMatrix training_inputs = new SimpleMatrix(inputs);
         SimpleMatrix training_outputs = new SimpleMatrix(outputs).transpose();
@@ -52,15 +54,28 @@ public final class Perceptron {
 
         System.out.println("Random Synaptic Weights: " + synaptic_weights);
 
+        SimpleMatrix final_outputs = new SimpleMatrix();
 
-        SimpleMatrix final_outputs = null;
+        for (int i = 0; i < 20000; i++) {
+            final_outputs  = sigmoid(training_inputs.mult(synaptic_weights)); // sigmoid(x1*w1+x2*w2+x3*w3)
+            SimpleMatrix error = training_outputs.minus(final_outputs);
 
-        for (int i = 0; i < 1; i++) {
-            SimpleMatrix input_layer = training_inputs;
+            SimpleMatrix adjustments = training_inputs.transpose().mult(normalMultiplication(error, sigmoidDerivative(final_outputs)));
 
-            final_outputs  = sigmoid(input_layer.mult(synaptic_weights));
+            synaptic_weights = synaptic_weights.plus(adjustments);
         }
 
-        System.out.print("Outputs after training: " + final_outputs);
+        System.out.println("Synaptic weights after training: " + synaptic_weights);
+        System.out.println("Outputs after training: " + final_outputs);
+    }
+
+    private SimpleMatrix normalMultiplication (SimpleMatrix a, SimpleMatrix b) {
+        SimpleMatrix c = new SimpleMatrix(a.numRows(), a.numCols());
+        for (int i = 0; i < a.numRows();i++) {
+            for (int d = 0; d < a.numCols();d++) {
+                c.set(i, d, a.get(i, d) * b.get(i, d));
+            }
+        }
+        return c;
     }
 }
