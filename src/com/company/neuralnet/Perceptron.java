@@ -2,35 +2,43 @@ package com.company.neuralnet;
 
 import org.ejml.equation.Equation;
 import org.ejml.simple.*;
+
+import java.util.EmptyStackException;
 import java.util.Random;
 
 public final class Perceptron {
 
-    private double[][] inputs;
-    private double[][] outputs;
-    private double[][] weights = {
-            {0},
-            {0},
-            {0}
-    };
+    private SimpleMatrix inputs;
+    private SimpleMatrix outputs;
+    private SimpleMatrix weights;
+    private int iterations;
 
-    public Perceptron () {
-        Random rand = new Random();
-
-        for (int i = 0; i < 3; i++) {
-            weights[i][0] = (2 * rand.nextDouble()) - 1;
-        }
+    public Perceptron (int iterations) {
+        this.iterations = iterations;
     }
 
     // GETTERS
+    public SimpleMatrix getInputs () { return inputs; }
+    public SimpleMatrix getOutputs () { return outputs; }
+    public SimpleMatrix getWeights () { return weights; }
+    public int getIterations () { return iterations; }
 
     // SETTERS
-    public void setInputs(double[][] inputs) {
-        this.inputs = inputs;
+    public void setInputs (double[][] inputs) {
+        this.inputs = new SimpleMatrix(inputs);
+        setRandomWeights();
     }
 
-    public void setOutputs(double[][] outputs) {
-        this.outputs = outputs;
+    public void setOutputs (double[][] outputs) {
+        this.outputs = new SimpleMatrix(outputs);
+    }
+
+    public void setWeights (double[][] weights) {
+        this.weights = new SimpleMatrix(weights);
+    }
+
+    public void setIterations (int iterations) {
+        this.iterations = iterations;
     }
 
     // METHODS
@@ -48,34 +56,61 @@ public final class Perceptron {
     }
 
     public void train () {
-        SimpleMatrix training_inputs = new SimpleMatrix(inputs);
-        SimpleMatrix training_outputs = new SimpleMatrix(outputs).transpose();
-        SimpleMatrix synaptic_weights = new SimpleMatrix(weights);
+            SimpleMatrix final_outputs = null;
 
-        System.out.println("Random Synaptic Weights: " + synaptic_weights);
+            if (inputs == null) throw new NullPointerException("inputs equals null");
+            if (outputs == null) throw new NullPointerException("outputs equals null");
 
-        SimpleMatrix final_outputs = new SimpleMatrix();
+            for (int i = 0; i < iterations; i++) {
+                final_outputs  = think(inputs);
+                SimpleMatrix error = outputs.minus(final_outputs);
 
-        for (int i = 0; i < 20000; i++) {
-            final_outputs  = sigmoid(training_inputs.mult(synaptic_weights)); // sigmoid(x1*w1+x2*w2+x3*w3)
-            SimpleMatrix error = training_outputs.minus(final_outputs);
-
-            SimpleMatrix adjustments = training_inputs.transpose().mult(normalMultiplication(error, sigmoidDerivative(final_outputs)));
-
-            synaptic_weights = synaptic_weights.plus(adjustments);
-        }
-
-        System.out.println("Synaptic weights after training: " + synaptic_weights);
-        System.out.println("Outputs after training: " + final_outputs);
+                SimpleMatrix adjustments = inputs.transpose().mult(normalMultiplication(error, sigmoidDerivative(final_outputs)));
+                weights = weights.plus(adjustments);
+            }
     }
 
-    private SimpleMatrix normalMultiplication (SimpleMatrix a, SimpleMatrix b) {
-        SimpleMatrix c = new SimpleMatrix(a.numRows(), a.numCols());
-        for (int i = 0; i < a.numRows();i++) {
-            for (int d = 0; d < a.numCols();d++) {
-                c.set(i, d, a.get(i, d) * b.get(i, d));
+    public SimpleMatrix think (SimpleMatrix inputs) {
+        SimpleMatrix outputs = null;
+
+        if (weights != null) {
+            outputs = sigmoid(inputs.mult(weights)); // sigmoid(x1*w1+x2*w2+x3*w3)
+        }
+
+        return outputs;
+    }
+
+    public SimpleMatrix think (double[][] inputs) {
+        SimpleMatrix inputsMatrix = new SimpleMatrix(inputs);
+        SimpleMatrix outputs = null;
+
+        if (weights != null) {
+            outputs = sigmoid(inputsMatrix.mult(weights)); // sigmoid(x1*w1+x2*w2+x3*w3)
+        }
+
+        return outputs;
+    }
+
+    // Multiplies 2 matrix but in the normal way
+    private SimpleMatrix normalMultiplication (SimpleMatrix A, SimpleMatrix B) {
+        SimpleMatrix c = new SimpleMatrix(A.numRows(), A.numCols());
+        for (int row = 0; row < A.numRows();row++) {
+            for (int col = 0; col < A.numCols();col++) {
+                c.set(row, col, A.get(row, col) * B.get(row, col));
             }
         }
         return c;
+    }
+
+    // setRandomWeights generates n random numbers for the weights
+    private void setRandomWeights () {
+        Random rand = new Random(2);
+        double[][] randomWeights = new double[inputs.numCols()][1];
+
+        for (int i = 0; i < 3; i++) {
+            randomWeights[i][0] = (2 * rand.nextDouble()) - 1;
+        }
+
+        setWeights(randomWeights);
     }
 }
