@@ -1,114 +1,120 @@
 package com.company.neuralnet;
 
-import org.ejml.equation.Equation;
-import org.ejml.simple.*;
-
-import java.util.EmptyStackException;
 import java.util.Random;
 
 public final class Perceptron {
 
-    private SimpleMatrix inputs;
-    private SimpleMatrix outputs;
-    private SimpleMatrix weights;
+    // ATTRIBUTES
     private int iterations;
+    private double[][] inputs;
+    private double[] outputs;
+    private double[] weights;
+
 
     public Perceptron (int iterations) {
         this.iterations = iterations;
     }
 
+
     // GETTERS
-    public SimpleMatrix getInputs () { return inputs; }
-    public SimpleMatrix getOutputs () { return outputs; }
-    public SimpleMatrix getWeights () { return weights; }
     public int getIterations () { return iterations; }
+
+    public double[][] getInputs () { return inputs; }
+
+    public double[] getOutputs () { return outputs; }
+
+    public double[] getWeights () { return weights; }
+
 
     // SETTERS
     public void setInputs (double[][] inputs) {
-        this.inputs = new SimpleMatrix(inputs);
+        this.inputs = inputs;
         setRandomWeights();
     }
 
-    public void setOutputs (double[][] outputs) {
-        this.outputs = new SimpleMatrix(outputs);
+    public void setOutputs (double[] outputs) {
+        this.outputs = outputs;
     }
 
-    public void setWeights (double[][] weights) {
-        this.weights = new SimpleMatrix(weights);
+    public void setWeights (double[] weights) {
+        this.weights = weights;
     }
 
     public void setIterations (int iterations) {
         this.iterations = iterations;
     }
 
+
     // METHODS
-    // The sigmoid function normalizes the value received between 1 and -1
-    public SimpleMatrix sigmoid (SimpleMatrix x) {
-        Equation eq = new Equation();
-
-        eq.alias(x.getDDRM(), "x");                        // These three lines just process
-        eq.process("r = 1 / (1 + exp(-x))");            // the sigmoid function "1 / (1 + exp(-x))"
-        return SimpleMatrix.wrap(eq.lookupMatrix("r"));   //  which returns another matrix
-    }
-
-    public SimpleMatrix sigmoidDerivative (SimpleMatrix x) {
-        return normalMultiplication(x, x.negative().plus(1));
-    }
-
     public void train () {
-            SimpleMatrix final_outputs = null;
+        if (inputs == null) throw new NullPointerException("inputs equals null");
+        if (outputs == null) throw new NullPointerException("outputs equals null");
 
-            if (inputs == null) throw new NullPointerException("inputs equals null");
-            if (outputs == null) throw new NullPointerException("outputs equals null");
+        for (int i = 0; i < iterations; i++) {
+            double[] final_outputs  = think(inputs);
 
-            for (int i = 0; i < iterations; i++) {
-                final_outputs  = think(inputs);
-                SimpleMatrix error = outputs.minus(final_outputs);
-
-                SimpleMatrix adjustments = inputs.transpose().mult(normalMultiplication(error, sigmoidDerivative(final_outputs)));
-                weights = weights.plus(adjustments);
-            }
+            adjustWeight(final_outputs);
+        }
     }
 
-    public SimpleMatrix think (SimpleMatrix inputs) {
-        SimpleMatrix outputs = null;
+    public double think (double[] inputs) {
+        double output = 0;
+
+        for (int i = 0; i < inputs.length; i++) {
+            output += inputs[i] * weights[i];
+        }
+
+        return sigmoid(output); // sigmoid(x1*w1+x2*w2+x3*w3)
+    }
+
+    public double[] think (double[][] inputs) {
+        double[] outputs = new double[inputs.length];
 
         if (weights != null) {
-            outputs = sigmoid(inputs.mult(weights)); // sigmoid(x1*w1+x2*w2+x3*w3)
+            for (int f = 0; f < inputs.length; f++) {
+                for (int c = 0; c < inputs[0].length; c++) {
+                    outputs[f] += inputs[f][c] * weights[c];
+                }
+                outputs[f] = sigmoid(outputs[f]); // sigmoid(x1*w1+x2*w2+x3*w3)
+            }
         }
 
         return outputs;
     }
 
-    public SimpleMatrix think (double[][] inputs) {
-        SimpleMatrix inputsMatrix = new SimpleMatrix(inputs);
-        SimpleMatrix outputs = null;
-
-        if (weights != null) {
-            outputs = sigmoid(inputsMatrix.mult(weights)); // sigmoid(x1*w1+x2*w2+x3*w3)
-        }
-
-        return outputs;
+    public double sigmoid (double x) {
+        // this is the sigmoid function "1 / (1 + exp(-x))", it normalizes the value received between 1 and -1
+        return 1 / (1 + Math.exp(-x));
     }
 
-    // Multiplies 2 matrix but in the normal way
-    private SimpleMatrix normalMultiplication (SimpleMatrix A, SimpleMatrix B) {
-        SimpleMatrix c = new SimpleMatrix(A.numRows(), A.numCols());
-        for (int row = 0; row < A.numRows();row++) {
-            for (int col = 0; col < A.numCols();col++) {
-                c.set(row, col, A.get(row, col) * B.get(row, col));
+    public double sigmoidDerivative (double x) {
+        // Sigmoid derivative controls the learning rate
+        return x * (1 - x);
+    }
+
+    private void adjustWeight (double[] lastOutputs) {
+        double[] adjustments = new double[lastOutputs.length];
+
+        for (int i = 0; i < lastOutputs.length; i++){
+            double error = outputs[i] - lastOutputs[i];
+
+            adjustments[i] = error * sigmoidDerivative(lastOutputs[i]);
+        }
+
+        for (int c = 0; c < inputs[0].length; c++) {
+            for (int f = 0; f < inputs.length; f++) {
+                weights[c] += inputs[f][c] * adjustments[f];
             }
         }
-        return c;
     }
 
-    // setRandomWeights generates n random numbers for the weights
     private void setRandomWeights () {
-        Random rand = new Random(2);
-        double[][] randomWeights = new double[inputs.numCols()][1];
+        // setRandomWeights generates n random numbers for the weights
+        Random rand = new Random();
+        double[] randomWeights = new double[inputs[0].length];
 
-        for (int i = 0; i < 3; i++) {
-            randomWeights[i][0] = (2 * rand.nextDouble()) - 1;
+        for (int i = 0; i < randomWeights.length; i++) {
+            randomWeights[i] = (2 * rand.nextDouble()) - 1;
         }
 
         setWeights(randomWeights);
