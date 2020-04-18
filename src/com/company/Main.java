@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import com.company.neuralnet.*;
 import com.company.neuralnet.view.*;
@@ -21,13 +22,15 @@ public class Main {
         double[] outputs = {0, 1, 1, 0};
 
         //double[] debugValues = net.getWeights();
-        Debug debugFrame = new Debug();
+        Debug debugFrame = new Debug(500);
         //debugFrame.draw();
         Perceptron net = new Perceptron(20000, debugFrame);
 
         net.setInputs(inputs);
         net.setOutputs(outputs);
         net.train();
+        //net.trainDebugger();
+
 
         double[] userInputs = new double[3];
         System.out.println("Input 1: ");

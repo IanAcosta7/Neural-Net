@@ -1,6 +1,9 @@
 package com.company.neuralnet;
 
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public final class Perceptron {
 
@@ -20,6 +23,7 @@ public final class Perceptron {
     public Perceptron (int iterations, IPerceptron iPer) {
         this.iterations = iterations;
         this.iPer = iPer;
+        this.iPer.setIterations(iterations);
     }
 
 
@@ -49,6 +53,8 @@ public final class Perceptron {
 
     public void setIterations (int iterations) {
         this.iterations = iterations;
+        if (iPer != null)
+            iPer.setIterations(iterations);
     }
 
 
@@ -58,7 +64,13 @@ public final class Perceptron {
         if (outputs == null) throw new NullPointerException("outputs equals null");
 
         for (int i = 0; i < iterations; i++) {
-            practice();
+            if (iPer != null) {
+                iPer.wait(this::practice);
+                iPer.showIterations(i+1);
+            }
+            else {
+                practice();
+            }
         }
     }
 

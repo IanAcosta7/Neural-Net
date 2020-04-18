@@ -1,38 +1,40 @@
 package com.company.neuralnet.view;
 
 import com.company.neuralnet.IPerceptron;
-import com.company.neuralnet.Perceptron;
 
-import javax.swing.*;
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Debug extends Frame implements IPerceptron {
+
+    // Debugging Attributes
+    private int microsDelay;
 
     private double[] inputs;
     private double output;
     private double[] weights;
+    private int iterations;
+    private int currentIterations;
 
-    public Debug () {
+    public Debug (int microsDelay) {
         super("Debug");
+
+        this.microsDelay = microsDelay;
 
         inputs = null;
         //output = Double.NaN;
         weights = null;
+        iterations = -1;
+        currentIterations = -1;
 
         frame.getContentPane().add(this);
         frame.pack();
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    public void draw () {
-        /*for (int i = 0; i < net.getIterations(); i++) {
-            net.practice();
-            bars = net.getWeights();
-            frame.repaint();
-        }*/
     }
 
     @Override
@@ -56,36 +58,48 @@ public class Debug extends Frame implements IPerceptron {
             }
         }
 
-
-        /*for (int i = 0; i < net.getInputs().length; i++) {
-            g.setColor(Color.LIGHT_GRAY);
-            g.fillRect( i * 50 + 20, frame.getHeight() - 160, 30, 100);
-
-            if (bars[i] < 0)
-                g.setColor(new Color(-(int)bars[i]*25, -(int)bars[i]*25, 0));
-            else
-                g.setColor(new Color((int)bars[i]*25, 0, 0));
-            System.out.println(bars[i]);
-            g.fillRect(i * 50 + 20, frame.getHeight() - 110, 30, (int)-bars[i]);
-        }*/
-
+        if (iterations >= 0 && currentIterations >= 0) {
+            g.drawString(currentIterations + " / " + iterations, 160, 20);
+        }
     }
 
     @Override
     public void showInputs (double[] currentI) {
         this.inputs = currentI;
-        frame.repaint();
+        wait(frame::repaint);
     }
 
     @Override
     public void showOutput (double currentO) {
         this.output = currentO;
-        frame.repaint();
+        wait(frame::repaint);
     }
 
     @Override
     public void showWeights (double[] w) {
         this.weights = w;
+        wait(frame::repaint);
+    }
+
+    @Override
+    public void showIterations(int currentI) {
+        currentIterations = currentI;
+        wait(frame::repaint);
+    }
+
+    @Override
+    public void setIterations(int i) {
+        iterations = i;
         frame.repaint();
+    }
+
+    @Override
+    public void wait(Runnable callback) {
+        try {
+            callback.run();
+            TimeUnit.MICROSECONDS.sleep(microsDelay);
+        } catch (Exception e){
+            Thread.currentThread().interrupt();
+        }
     }
 }

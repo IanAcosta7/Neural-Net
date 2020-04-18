@@ -2,9 +2,15 @@ package com.company.neuralnet;
 
 public interface IPerceptron {
 
-    public void showInputs (double[] currentI);
+    void showInputs (double[] currentI);
 
-    public void showOutput (double currentO);
+    void showOutput (double currentO);
 
-    public void showWeights (double[] w);
+    void showWeights(double[] w);
+
+    void showIterations (int currentI);
+
+    void setIterations (int i);
+
+    void wait (Runnable callback);
 }
