@@ -1,7 +1,9 @@
 package com.company;
 
 import java.util.Scanner;
+
 import com.company.neuralnet.*;
+import com.company.neuralnet.view.*;
 
 public class Main {
 
@@ -18,7 +20,10 @@ public class Main {
         };
         double[] outputs = {0, 1, 1, 0};
 
-        Perceptron net = new Perceptron(20000);
+        //double[] debugValues = net.getWeights();
+        Debug debugFrame = new Debug();
+        //debugFrame.draw();
+        Perceptron net = new Perceptron(20000, debugFrame);
 
         net.setInputs(inputs);
         net.setOutputs(outputs);
