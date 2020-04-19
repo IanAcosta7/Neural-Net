@@ -1,6 +1,7 @@
 package com.company.neuralnet.view;
 
 import com.company.neuralnet.IPerceptron;
+import com.company.neuralnet.Perceptron;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -11,24 +12,29 @@ import java.util.concurrent.TimeUnit;
 public class Debug extends Frame implements IPerceptron {
 
     // Debugging Attributes
-    private int microsDelay;
+    private int nanosDelay;
 
+    private Perceptron perceptron;
+
+    /*
     private double[] inputs;
     private double output;
     private double[] weights;
     private int iterations;
-    private int currentIterations;
+    private int currentIterations;*/
 
-    public Debug (int microsDelay) {
+    public Debug (int nanosDelay) {
         super("Debug");
 
-        this.microsDelay = microsDelay;
+        this.nanosDelay = nanosDelay;
 
+        /*
         inputs = null;
         //output = Double.NaN;
         weights = null;
         iterations = -1;
         currentIterations = -1;
+         */
 
         frame.getContentPane().add(this);
         frame.pack();
@@ -42,64 +48,46 @@ public class Debug extends Frame implements IPerceptron {
         // Here we can draw things
         DecimalFormat formatter = new DecimalFormat("0.00");
 
-        if (inputs != null) {
-            for (int i = 0; i < inputs.length; i++) {
-                g.drawString(formatter.format(inputs[i]), 20, 20 * i + 20);
+        if (perceptron.getCurrentInputs() != null) {
+            for (int i = 0; i < perceptron.getCurrentInputs().length; i++) {
+                g.drawString(formatter.format(perceptron.getCurrentInputs()[i]), 20, 20 * i + 20);
             }
         }
 
-        if (!Double.isNaN(output)) {
-            g.drawString(formatter.format(output), 100, 20);
+        if (!Double.isNaN(perceptron.getCurrentOutput())) {
+            g.drawString(formatter.format(perceptron.getCurrentOutput()), 100, 20);
         }
 
-        if (weights != null) {
-            for (int i = 0; i < weights.length; i++) {
-                g.drawString(formatter.format(weights[i]), 60, 20 * i + 20);
+        if (perceptron.getWeights() != null) {
+            for (int i = 0; i < perceptron.getWeights().length; i++) {
+                g.drawString(formatter.format(perceptron.getWeights()[i]), 60, 20 * i + 20);
             }
         }
 
-        if (iterations >= 0 && currentIterations >= 0) {
-            g.drawString(currentIterations + " / " + iterations, 160, 20);
+        if (perceptron.getIterations() >= 0 && perceptron.getCurrentIteration() >= 0) {
+            g.drawString(perceptron.getCurrentIteration() + " / " + perceptron.getIterations(), 160, 20);
         }
     }
 
     @Override
-    public void showInputs (double[] currentI) {
-        this.inputs = currentI;
-        wait(frame::repaint);
-    }
-
-    @Override
-    public void showOutput (double currentO) {
-        this.output = currentO;
-        wait(frame::repaint);
-    }
-
-    @Override
-    public void showWeights (double[] w) {
-        this.weights = w;
-        wait(frame::repaint);
-    }
-
-    @Override
-    public void showIterations(int currentI) {
-        currentIterations = currentI;
-        wait(frame::repaint);
-    }
-
-    @Override
-    public void setIterations(int i) {
-        iterations = i;
-        frame.repaint();
+    public void updatePerceptron (Perceptron p, boolean addDelay) {
+        perceptron = p;
+        if (addDelay)
+            wait(frame::repaint);
     }
 
     @Override
     public void wait(Runnable callback) {
         try {
+            //TimeUnit.NANOSECONDS.wait(nanosDelay);
+            TimeUnit.MILLISECONDS.sleep(nanosDelay);
             callback.run();
-            TimeUnit.MICROSECONDS.sleep(microsDelay);
         } catch (Exception e){
+            //Thread.currentThread().notify()
             Thread.currentThread().interrupt();
         }
+
+        //final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        //executorService.scheduleAtFixedRate(callback, 0, nanosDelay, TimeUnit.NANOSECONDS);
     }
 }

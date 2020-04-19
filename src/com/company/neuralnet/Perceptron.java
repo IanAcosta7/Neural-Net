@@ -12,7 +12,12 @@ public final class Perceptron {
     private double[][] inputs;
     private double[] outputs;
     private double[] weights;
+
+    // DEBUGGING OPTIONAL ATTRIBUTES
     private IPerceptron iPer;
+    private int currentIteration;
+    private double[] currentInputs;
+    private double currentOutput;
 
 
     public Perceptron (int iterations) {
@@ -23,7 +28,8 @@ public final class Perceptron {
     public Perceptron (int iterations, IPerceptron iPer) {
         this.iterations = iterations;
         this.iPer = iPer;
-        this.iPer.setIterations(iterations);
+        this.iPer.updatePerceptron(this, true);
+        //this.iPer.setIterations(iterations);
     }
 
 
@@ -36,6 +42,15 @@ public final class Perceptron {
 
     public double[] getWeights () { return weights; }
 
+    public double[] getCurrentInputs () { return currentInputs; }
+
+    public int getCurrentIteration () {
+        return currentIteration;
+    }
+
+    public double getCurrentOutput () {
+        return currentOutput;
+    }
 
     // SETTERS
     public void setInputs (double[][] inputs) {
@@ -53,8 +68,6 @@ public final class Perceptron {
 
     public void setIterations (int iterations) {
         this.iterations = iterations;
-        if (iPer != null)
-            iPer.setIterations(iterations);
     }
 
 
@@ -65,8 +78,9 @@ public final class Perceptron {
 
         for (int i = 0; i < iterations; i++) {
             if (iPer != null) {
+                currentIteration = i + 1;
                 iPer.wait(this::practice);
-                iPer.showIterations(i+1);
+                iPer.updatePerceptron(this, false);
             }
             else {
                 practice();
@@ -83,8 +97,9 @@ public final class Perceptron {
     public double think (double[] inputs) {
         double output = 0;
 
+        currentInputs = inputs;
         if (iPer != null)
-            iPer.showInputs(inputs);
+            iPer.updatePerceptron(this, true);
 
         for (int i = 0; i < inputs.length; i++) {
             output += inputs[i] * weights[i];
@@ -92,8 +107,9 @@ public final class Perceptron {
 
         output = sigmoid(output);
 
+        currentOutput = output;
         if (iPer != null)
-            iPer.showOutput(output);
+            iPer.updatePerceptron(this, true);
 
         return output; // sigmoid(x1*w1+x2*w2+x3*w3)
     }
@@ -103,15 +119,18 @@ public final class Perceptron {
 
         if (weights != null) {
             for (int f = 0; f < inputs.length; f++) {
+                currentInputs = inputs[f];
                 if (iPer != null)
-                    iPer.showInputs(inputs[f]);
+                    iPer.updatePerceptron(this, true);
+
                 for (int c = 0; c < inputs[0].length; c++) {
                     outputs[f] += inputs[f][c] * weights[c];
                 }
                 outputs[f] = sigmoid(outputs[f]); // sigmoid(x1*w1+x2*w2+x3*w3)
 
+                currentOutput = outputs[f];
                 if (iPer != null)
-                    iPer.showOutput(outputs[f]);
+                    iPer.updatePerceptron(this, true);
             }
         }
 
@@ -141,8 +160,9 @@ public final class Perceptron {
             for (int f = 0; f < inputs.length; f++) {
                 weights[c] += inputs[f][c] * adjustments[f];
             }
+
             if (iPer != null)
-                iPer.showWeights(weights);
+                iPer.updatePerceptron(this, false);
         }
     }
 
@@ -156,7 +176,7 @@ public final class Perceptron {
         }
 
         if (iPer != null)
-            iPer.showWeights(weights);
+            iPer.updatePerceptron(this, false);
 
         setWeights(randomWeights);
     }
