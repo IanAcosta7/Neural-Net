@@ -1,10 +1,9 @@
 package com.company;
 
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import com.company.neuralnet.*;
-import com.company.neuralnet.view.*;
+import com.company.neuralnet.views.*;
 
 public class Main {
 

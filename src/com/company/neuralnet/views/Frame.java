@@ -1,4 +1,4 @@
-package com.company.neuralnet.view;
+package com.company.neuralnet.views;
 
 import javax.swing.*;
 

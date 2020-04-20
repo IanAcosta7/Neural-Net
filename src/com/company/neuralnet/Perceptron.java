@@ -14,22 +14,37 @@ public final class Perceptron {
     private double[] weights;
 
     // DEBUGGING OPTIONAL ATTRIBUTES
-    private IPerceptron iPer;
     private int currentIteration;
     private double[] currentInputs;
     private double currentOutput;
+    private IPerceptron iPer;
 
 
     public Perceptron (int iterations) {
         this.iterations = iterations;
+        // DEFAULT VALUES;
+        this.inputs = null;
+        this.outputs = null;
+        this.weights = null;
+        this.currentIteration = -1;
+        this.currentInputs = null;
+        this.currentOutput = -1;
+
         this.iPer = null;
     }
 
     public Perceptron (int iterations, IPerceptron iPer) {
         this.iterations = iterations;
+        // DEFAULT VALUES
+        this.inputs = null;
+        this.outputs = null;
+        this.weights = null;
+        this.currentIteration = -1;
+        this.currentInputs = null;
+        this.currentOutput = -1;
+
         this.iPer = iPer;
         this.iPer.updatePerceptron(this, true);
-        //this.iPer.setIterations(iterations);
     }
 
 
@@ -51,6 +66,7 @@ public final class Perceptron {
     public double getCurrentOutput () {
         return currentOutput;
     }
+
 
     // SETTERS
     public void setInputs (double[][] inputs) {
