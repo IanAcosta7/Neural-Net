@@ -21,7 +21,7 @@ public class Main {
         double[] outputs = {0, 1, 1, 0};
 
         //double[] debugValues = net.getWeights();
-        Debug debugFrame = new Debug(1);
+        Debug debugFrame = new Debug(250);
         //debugFrame.draw();
         Perceptron net = new Perceptron(20000, debugFrame);
 

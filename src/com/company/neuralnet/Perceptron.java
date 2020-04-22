@@ -114,8 +114,10 @@ public final class Perceptron {
         double output = 0;
 
         currentInputs = inputs;
-        if (iPer != null)
+        if (iPer != null) {
             iPer.updatePerceptron(this, true);
+            iPer.setState(this, true);
+        }
 
         for (int i = 0; i < inputs.length; i++) {
             output += inputs[i] * weights[i];
@@ -124,8 +126,10 @@ public final class Perceptron {
         output = sigmoid(output);
 
         currentOutput = output;
-        if (iPer != null)
+        if (iPer != null) {
             iPer.updatePerceptron(this, true);
+            iPer.setState(this, false);
+        }
 
         return output; // sigmoid(x1*w1+x2*w2+x3*w3)
     }
@@ -136,8 +140,10 @@ public final class Perceptron {
         if (weights != null) {
             for (int f = 0; f < inputs.length; f++) {
                 currentInputs = inputs[f];
-                if (iPer != null)
+                if (iPer != null) {
+                    iPer.setState(this, true);
                     iPer.updatePerceptron(this, true);
+                }
 
                 for (int c = 0; c < inputs[0].length; c++) {
                     outputs[f] += inputs[f][c] * weights[c];
@@ -145,8 +151,10 @@ public final class Perceptron {
                 outputs[f] = sigmoid(outputs[f]); // sigmoid(x1*w1+x2*w2+x3*w3)
 
                 currentOutput = outputs[f];
-                if (iPer != null)
+                if (iPer != null) {
                     iPer.updatePerceptron(this, true);
+                    iPer.setState(this, false);
+                }
             }
         }
 

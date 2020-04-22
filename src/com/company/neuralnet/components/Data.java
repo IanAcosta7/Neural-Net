@@ -1,60 +1,72 @@
 package com.company.neuralnet.components;
 
-public class Data extends Component {
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public final class Data extends Component {
     // ATTRIBUTES
-    private int marginX;
-    private int marginY;
+    private int x;
+    private int y;
+    private int separation;
+    private int inputAmount;
 
-    private int[][] inputStrings;
-    private int[][] weightStrings;
-    private int[] outputString;
+    private ArrayList<HashMap<String, Integer>> inputStrings;
+    private ArrayList<HashMap<String, Integer>> weightStrings;
+    private HashMap<String, Integer> outputString;
 
-    public Data(int x, int y, int inputAmount, int margin, int offset) {
-        super(x, y, margin * 5, margin * offset + inputAmount * margin);
+    public Data(int x, int y, int inputAmount, int margin) {
+        super(x, y, margin * 7, margin + x + inputAmount * margin);
 
-        marginX = margin;
-        marginY = margin * offset;
+        this.x = x + margin;
+        this.y = y + margin;
+        this.separation = margin;
+        this.inputAmount = inputAmount;
+
+        inputStrings = new ArrayList<>();
+        weightStrings = new ArrayList<>();
+        outputString = new HashMap<>();
+
+        setInputStrings();
+        setWeightStrings();
+        setOutputString();
     }
 
 
     //GETTERS
-    public int[][] getInputStrings() {
+    public ArrayList<HashMap<String, Integer>> getInputStrings() {
         return inputStrings;
     }
 
-    public int[][] getWeightStrings() {
+    public ArrayList<HashMap<String, Integer>> getWeightStrings() {
         return weightStrings;
     }
 
-    public int[] getOutputString() {
+    public HashMap<String, Integer> getOutputString() {
         return outputString;
     }
 
 
     // SETTERS
-    public void setInputStrings (int amount) {
-        inputStrings = new int[amount][2];
-
-        for (int i = 0; i < amount; i++) {
-            inputStrings[i][0] = marginX; // X
-            inputStrings[i][1] = marginY * (i + 1); // Y
+    private void setInputStrings () {
+        for (int i = 0; i < inputAmount; i++) {
+            HashMap<String, Integer> hm = new HashMap<>();
+            hm.put("x", x); // X
+            hm.put("y", y + i * separation); // Y
+            inputStrings.add(hm);
         }
     }
 
-    public void setWeightStrings (int amount) {
-
-        weightStrings = new int[amount][2];
-
-        for (int i = 0; i < amount; i++) {
-            weightStrings[i][0] = marginX * 2; // X
-            weightStrings[i][1] = marginY * (i + 1); // Y
+    private void setWeightStrings () {
+        for (int i = 0; i < inputAmount; i++) {
+            HashMap<String, Integer> hm = new HashMap<String, Integer>();
+            hm.put("x", x + separation * 2); // X
+            hm.put("y", y + i * separation); // Y
+            weightStrings.add(hm);
         }
     }
 
-    public void setOutputString () {
-        outputString = new int[2];
-
-        outputString[0] = marginX * 3; // X
-        outputString[1] = marginY; // Y
+    private void setOutputString () {
+        outputString.put("x", x + separation * 4); // X
+        outputString.put("y", y); // Y
     }
 }
