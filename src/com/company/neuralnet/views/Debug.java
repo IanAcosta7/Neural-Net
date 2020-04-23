@@ -53,11 +53,6 @@ public class Debug extends Frame implements IPerceptron {
             Iteration iteration = new Iteration(scheme.getX() + scheme.getWidth() / 3, scheme.getY(), 1, g);
             iteration.setPerceptron(perceptron);
         }
-
-        // ITERATIONS COMPONENT
-        /*if (per.getIterations() >= 0 && per.getCurrentIteration() >= 0) {
-            g.drawString(per.getCurrentIteration() + " / " + per.getIterations(), 160, 20);
-        }*/
     }
 
 

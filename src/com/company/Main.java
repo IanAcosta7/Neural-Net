@@ -23,14 +23,10 @@ public class Main {
         Debug debugFrame = new Debug(250);
 
         Perceptron per = new Perceptron(20000, debugFrame);
-        Perceptron per2 = new Perceptron(20000, debugFrame);
 
         per.setInputs(inputs);
-        per2.setInputs(inputs);
         per.setOutputs(outputs);
-        per2.setOutputs(outputs);
         per.train();
-        per2.train();
 
         double[] userInputs = new double[3];
         System.out.println("Input 1: ");

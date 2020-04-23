@@ -48,9 +48,17 @@ public class Scheme extends Component {
         if (perceptron.getCurrentInputs() != null && perceptron.getWeights() != null && !Double.isNaN(perceptron.getCurrentOutput())) {
             for (int i = 0; i < perceptron.getCurrentInputs().length; i++) {
                 // Draw Inputs
+                if (perceptron.getCurrentInputs()[i] > 0.5)
+                    g.setColor(Color.GREEN);
+                else
+                    g.setColor(Color.BLACK);
                 g.drawLine(xPointer, yPointer + (i * separation), xPointer + separation * 4, (yPointer + super.getHeight() / 2) - separation / 2);
             }
             // Draw Output
+            if (perceptron.getCurrentOutput() > 0.5)
+                g.setColor(Color.GREEN);
+            else
+                g.setColor(Color.BLACK);
             g.drawLine(xPointer + separation * 4, (yPointer + super.getHeight() / 2) - separation / 2, xPointer + separation * 8, (yPointer + super.getHeight() / 2) - separation / 2);
 
             // Draw perceptron
