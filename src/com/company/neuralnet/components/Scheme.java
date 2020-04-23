@@ -66,7 +66,7 @@ public class Scheme extends Component {
                 g.setColor(Color.GREEN);
             else
                 g.setColor(Color.RED);
-            g.fillOval((xPointer + separation * 4) - (separation * 2) / 2, ((yPointer + super.getHeight() / 4) - separation / 4) - (super.getHeight() / 4 - separation / 4), separation * 2, separation * 2);
+            g.fillOval((xPointer + separation * 4) - (separation * 2) / 2, ((yPointer + super.getHeight() / 2) - separation / 2) - separation, separation * 2, separation * 2);
             g.setColor(Color.BLACK);
         }
     }
