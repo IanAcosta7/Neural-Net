@@ -31,7 +31,7 @@ public class Scheme extends Component {
     public void setPerceptron (Perceptron per) {
         this.perceptron = per;
         if (per.getCurrentInputs() != null) {
-            super.setWidth(separation * 5);
+            super.setWidth(separation * 9);
             super.setHeight(separation * per.getCurrentInputs().length);
         }
         drawScheme();
