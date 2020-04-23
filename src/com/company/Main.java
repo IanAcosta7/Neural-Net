@@ -1,5 +1,6 @@
 package com.company;
 
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 import com.company.neuralnet.*;
@@ -13,12 +14,12 @@ public class Main {
         scan = new Scanner(System.in);
 
         double[][] inputs = {
-                {0, 0, 1},
-                {1, 1, 1},
-                {1, 0, 1},
-                {0, 1, 1}
+                {0, 0},
+                {0, 1},
+                {1, 0},
+                {1, 1}
         };
-        double[] outputs = {0, 1, 1, 0};
+        double[] outputs = {0, 0, 0, 1};
 
         Debug debugFrame = new Debug(250);
 
@@ -28,16 +29,15 @@ public class Main {
         per.setOutputs(outputs);
         per.train();
 
-        double[] userInputs = new double[3];
+        double[] userInputs = new double[2];
         System.out.println("Input 1: ");
         userInputs[0] = scan.nextDouble();
         System.out.println("Input 2: ");
         userInputs[1] = scan.nextDouble();
-        System.out.println("Input 3: ");
-        userInputs[2] = scan.nextDouble();
 
         double finalOutput = per.think(userInputs);
 
-        System.out.println("Net output: " + finalOutput);
+        DecimalFormat formatter = new DecimalFormat("0.00");
+        System.out.println("Net output: " + formatter.format(finalOutput));
     }
 }

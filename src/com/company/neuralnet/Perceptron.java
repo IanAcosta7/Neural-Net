@@ -1,9 +1,6 @@
 package com.company.neuralnet;
 
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public final class Perceptron {
 
@@ -12,6 +9,7 @@ public final class Perceptron {
     private double[][] inputs;
     private double[] outputs;
     private double[] weights;
+    private double biasWeight;
 
     // DEBUGGING OPTIONAL ATTRIBUTES
     private int currentIteration;
@@ -26,6 +24,7 @@ public final class Perceptron {
         this.inputs = null;
         this.outputs = null;
         this.weights = null;
+        this.biasWeight = 0;
         this.currentIteration = -1;
         this.currentInputs = null;
         this.currentOutput = -1;
@@ -39,6 +38,7 @@ public final class Perceptron {
         this.inputs = null;
         this.outputs = null;
         this.weights = null;
+        this.biasWeight = 0;
         this.currentIteration = -1;
         this.currentInputs = null;
         this.currentOutput = -1;
@@ -57,6 +57,10 @@ public final class Perceptron {
 
     public double[] getWeights () { return weights; }
 
+    public double getBiasWeight() {
+        return biasWeight;
+    }
+
     public double[] getCurrentInputs () { return currentInputs; }
 
     public int getCurrentIteration () {
@@ -72,6 +76,7 @@ public final class Perceptron {
     public void setInputs (double[][] inputs) {
         this.inputs = inputs;
         setRandomWeights();
+        setRandomBiasWeights();
     }
 
     public void setOutputs (double[] outputs) {
@@ -80,6 +85,10 @@ public final class Perceptron {
 
     public void setWeights (double[] weights) {
         this.weights = weights;
+    }
+
+    public void setBiasWeight(double biasWeight) {
+        this.biasWeight = biasWeight;
     }
 
     public void setIterations (int iterations) {
@@ -107,7 +116,7 @@ public final class Perceptron {
     public void practice() {
         double[] final_outputs  = think(inputs);
 
-        adjustWeight(final_outputs);
+        correctPerceptron(final_outputs);
     }
 
     public double think (double[] inputs) {
@@ -123,7 +132,8 @@ public final class Perceptron {
             output += inputs[i] * weights[i];
         }
 
-        output = sigmoid(output);
+        output += 1 * biasWeight;
+        output = sigmoid(output); // sigmoid(x1 * w1 + x2 * w2 + x3 * w3 + 1 * biasWeight)
 
         currentOutput = output;
         if (iPer != null) {
@@ -131,7 +141,7 @@ public final class Perceptron {
             iPer.setState(this, false);
         }
 
-        return output; // sigmoid(x1*w1+x2*w2+x3*w3)
+        return output;
     }
 
     public double[] think (double[][] inputs) {
@@ -139,6 +149,8 @@ public final class Perceptron {
 
         if (weights != null) {
             for (int f = 0; f < inputs.length; f++) {
+
+                // Send Data to interface
                 currentInputs = inputs[f];
                 if (iPer != null) {
                     iPer.setState(this, true);
@@ -148,8 +160,10 @@ public final class Perceptron {
                 for (int c = 0; c < inputs[0].length; c++) {
                     outputs[f] += inputs[f][c] * weights[c];
                 }
-                outputs[f] = sigmoid(outputs[f]); // sigmoid(x1*w1+x2*w2+x3*w3)
+                outputs[f] += 1 * biasWeight;
+                outputs[f] = sigmoid(outputs[f]); // sigmoid(x1 * w1 + x2 * w2 + x3 * w3 + 1 * biasWeight)
 
+                // Send Data to interface
                 currentOutput = outputs[f];
                 if (iPer != null) {
                     iPer.updatePerceptron(this, true);
@@ -171,7 +185,7 @@ public final class Perceptron {
         return x * (1 - x);
     }
 
-    private void adjustWeight (double[] lastOutputs) {
+    private void correctPerceptron (double[] lastOutputs) {
         double[] adjustments = new double[lastOutputs.length];
 
         for (int i = 0; i < lastOutputs.length; i++){
@@ -180,6 +194,11 @@ public final class Perceptron {
             adjustments[i] = error * sigmoidDerivative(lastOutputs[i]);
         }
 
+        adjustWeights(adjustments);
+        adjustBiasWeights(adjustments);
+    }
+
+    private void adjustWeights(double[] adjustments) {
         for (int c = 0; c < inputs[0].length; c++) {
             for (int f = 0; f < inputs.length; f++) {
                 weights[c] += inputs[f][c] * adjustments[f];
@@ -187,6 +206,12 @@ public final class Perceptron {
 
             if (iPer != null)
                 iPer.updatePerceptron(this, false);
+        }
+    }
+
+    private void adjustBiasWeights(double[] adjustments) {
+        for (int f = 0; f < adjustments.length; f++) {
+            biasWeight += 1 * adjustments[f];
         }
     }
 
@@ -203,5 +228,12 @@ public final class Perceptron {
             iPer.updatePerceptron(this, false);
 
         setWeights(randomWeights);
+    }
+
+    private void setRandomBiasWeights () {
+        Random rand = new Random();
+        double randomWeight = (2 * rand.nextDouble()) - 1;
+
+        setBiasWeight(randomWeight);
     }
 }
