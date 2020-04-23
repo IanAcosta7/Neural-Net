@@ -18,7 +18,7 @@ A Perceptron has:
 The **Weights** will determine how the Perceptron is calculating the **Output**. But how, *"our Perceptron needs to learn to do this by itself"* we only will tell him how to correct these **Weights**.  
 At the beginning it doesn't matter how these **Weights** are initialized because, if we compare this perceptron to a new born baby, we don't know how the baby will react to new information. So our Perceptron will work the same way, at the start we can **initialize this values at random**.  
  
-To generate an **Output** the Perceptron does *the sum of the multiplications between the inputs and the weights.*  
+To generate an **Output** the Perceptron does the *weighted sum* of the multiplications between the inputs and the weights.  
 `X1*W1 + X2*W2 + ... + Xn*Wn`  
 
 ![](README/perceptron.png)
@@ -53,6 +53,13 @@ This function receives the outputs given by the Perceptron and helps the weights
 So our correction or adjustments should be calculated this way:  
 `adjustments = error * inputs * sigmoidDerivative(output)`  
 We add these adjustments to the weights. And now our weights will get a slightly better output.
+
+### Bias
+You may have noticed that the weighted sum of the Perceptron won't always work.  
+For example, if we take (0, 0, 0) as our inputs, when the Perceptron multiplies this values by its weights, the output will be always 0. But what if we wanted the output to be 1? To correct  this problem we need a **Bias**.  
+A **Bias** is an additional input (whit his correspondent weight) that always have the value of 1. That way when we do the following operation:  
+`X1*W1 + X2*W2 + X3*W3 + 1*B1`  
+Our output won't have this problem, because *B1* will be a new weight that helps the output not to get stuck.
 
 ### Repeat
 This process won't work the first time, nor the second or the third. Like us, machines need time and practice to learn new things. This whole process will need to be repeated thousands of times to work, for example 20000 times.  
