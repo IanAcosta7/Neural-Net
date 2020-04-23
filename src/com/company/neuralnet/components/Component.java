@@ -30,4 +30,13 @@ public abstract class Component {
     public int getHeight() {
         return height;
     }
+
+    // SETTERS
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
 }

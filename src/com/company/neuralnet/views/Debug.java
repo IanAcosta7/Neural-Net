@@ -5,7 +5,7 @@ import com.company.neuralnet.Perceptron;
 import com.company.neuralnet.components.*;
 
 import java.awt.*;
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Debug extends Frame implements IPerceptron {
@@ -14,9 +14,8 @@ public class Debug extends Frame implements IPerceptron {
     private int nanosDelay;
 
     // PERCEPTRON ATTRIBUTES
-    private Perceptron per;
-    private boolean state;
-    private int[] perData;
+    private ArrayList<Perceptron> perceptrons;
+    private ArrayList<Boolean> states;
 
 
     // CONSTRUCTOR
@@ -24,9 +23,8 @@ public class Debug extends Frame implements IPerceptron {
         super("Debug");
 
         this.nanosDelay = nanosDelay;
-        per = null;
-        state = false;
-        perData = null;
+        perceptrons = new ArrayList<>();
+        states = new ArrayList<>();
 
         frame.getContentPane().add(this);
         frame.pack();
@@ -35,69 +33,27 @@ public class Debug extends Frame implements IPerceptron {
         frame.setVisible(true);
     }
 
+
     // METHODS
-    private void drawData (Graphics g) {
-        DecimalFormat formatter = new DecimalFormat("0.00");
+    private void draw (Graphics g) {
+        int previousHeight = 0;
 
+        for (Perceptron perceptron : perceptrons) {
+            // DRAW A DATA COMPONENT
+            Data data = new Data(0, previousHeight, 2, g);
+            data.setPerceptron(perceptron);
+            previousHeight = data.getHeight();
 
-        if (per.getCurrentInputs() != null && per.getWeights() != null && !Double.isNaN(per.getCurrentOutput())) {
-            int previousHeight = 0;
-            int inputAmount = per.getCurrentInputs().length;
-
-            //for (Perceptron perceptron : per) { Used when we have an array
-            for (int d = 0; d < 1; d++) {
-                // DATA COMPONENTS
-                Data data = new Data(0, previousHeight, inputAmount, 20);
-
-                // Draw inputs
-                for (int i = 0; i < data.getInputStrings().size(); i++) {
-                    g.drawString(formatter.format(per.getCurrentInputs()[i]), data.getInputStrings().get(i).get("x"), data.getInputStrings().get(i).get("y"));
-                }
-
-                // Draw weights
-                for (int i = 0; i < data.getWeightStrings().size(); i++) {
-                    g.drawString(formatter.format(per.getWeights()[i]), data.getWeightStrings().get(i).get("x"), data.getWeightStrings().get(i).get("y"));
-                }
-
-                // Draw output
-                g.drawString(formatter.format(per.getCurrentOutput()), data.getOutputString().get("x"), data.getOutputString().get("y"));
-
-                // DATA SCHEMA
-                Scheme scheme = new Scheme(data.getWidth(), 0, inputAmount, 20);
-
-                // Draw inputs
-                for (int i = 0; i < inputAmount; i++) {
-                    g.drawLine(scheme.getInputPoints().get(i).get("x1"), scheme.getInputPoints().get(i).get("y1"), scheme.getInputPoints().get(i).get("x2"), scheme.getInputPoints().get(i).get("y2"));
-                }
-
-                // Draw Output
-                g.drawLine(scheme.getOutputsPoint().get("x1"), scheme.getOutputsPoint().get("y1"), scheme.getOutputsPoint().get("x2"), scheme.getOutputsPoint().get("y2"));
-
-                // Draw perceptron
-                if (state)
-                    g.setColor(Color.RED);
-                else
-                    g.setColor(Color.GREEN);
-                g.fillOval(scheme.getPerceptronOvals().get("x"), scheme.getPerceptronOvals().get("y"), scheme.getPerceptronOvals().get("width"), scheme.getPerceptronOvals().get("height"));
-                g.setColor(Color.BLACK);
-            }
+            // DRAW A SCHEME COMPONENT
+            Scheme scheme = new Scheme(data.getWidth(), 0, 2, g);
+            scheme.setPerceptron(perceptron);
+            scheme.setState(states.get(perceptrons.indexOf(perceptron)));
         }
 
         // ITERATIONS COMPONENT
         /*if (per.getIterations() >= 0 && per.getCurrentIteration() >= 0) {
             g.drawString(per.getCurrentIteration() + " / " + per.getIterations(), 160, 20);
         }*/
-
-    }
-
-    public void drawNet (Graphics g) {
-        if (per != null) {
-            if (per.getCurrentInputs() != null) {
-                for (int i = 0; i < per.getCurrentInputs().length; i++) {
-                    //g.drawOval();
-                }
-            }
-        }
     }
 
 
@@ -105,13 +61,17 @@ public class Debug extends Frame implements IPerceptron {
     @Override
     public void paintComponent(Graphics g) {
         // Here we can draw things
-        drawData(g);
-        drawNet(g);
+        draw(g);
     }
 
     @Override
     public void updatePerceptron (Perceptron p, boolean addDelay) {
-        per = p;
+        if (perceptrons.contains(p))
+            perceptrons.set(perceptrons.indexOf(p), p);
+        else {
+            perceptrons.add(p);
+            states.add(false);
+        }
 
         if (addDelay)
             wait(frame::repaint);
@@ -134,7 +94,7 @@ public class Debug extends Frame implements IPerceptron {
 
     @Override
     public void setState (Perceptron p, boolean state) {
-        this.state = state;
+        this.states.set(perceptrons.indexOf(p), state);
         wait(frame::repaint);
     }
 }

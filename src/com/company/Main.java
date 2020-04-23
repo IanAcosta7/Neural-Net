@@ -20,16 +20,17 @@ public class Main {
         };
         double[] outputs = {0, 1, 1, 0};
 
-        //double[] debugValues = net.getWeights();
         Debug debugFrame = new Debug(250);
-        //debugFrame.draw();
-        Perceptron net = new Perceptron(20000, debugFrame);
 
-        net.setInputs(inputs);
-        net.setOutputs(outputs);
-        net.train();
-        //net.trainDebugger();
+        Perceptron per = new Perceptron(20000, debugFrame);
+        Perceptron per2 = new Perceptron(20000, debugFrame);
 
+        per.setInputs(inputs);
+        per2.setInputs(inputs);
+        per.setOutputs(outputs);
+        per2.setOutputs(outputs);
+        per.train();
+        per2.train();
 
         double[] userInputs = new double[3];
         System.out.println("Input 1: ");
@@ -39,7 +40,7 @@ public class Main {
         System.out.println("Input 3: ");
         userInputs[2] = scan.nextDouble();
 
-        double finalOutput = net.think(userInputs);
+        double finalOutput = per.think(userInputs);
 
         System.out.println("Net output: " + finalOutput);
     }
