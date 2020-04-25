@@ -1,5 +1,6 @@
 package com.company.neuralnet;
 
+import java.util.BitSet;
 import java.util.Random;
 
 public final class Perceptron {
@@ -16,6 +17,10 @@ public final class Perceptron {
     private double[] currentInputs;
     private double currentOutput;
     private IPerceptron iPer;
+
+    // NN ATTRIBUTES
+    private int inputAmount;
+    private int type;
 
 
     public Perceptron (int iterations) {
@@ -47,6 +52,25 @@ public final class Perceptron {
         this.iPer.updatePerceptron(this, true);
     }
 
+    // CONSTRUCTOR FOR NN
+    public Perceptron (int inputAmount, int type) {
+        this.inputAmount = inputAmount;
+        this.type = type;
+
+        // DEFAULT VALUES;
+        this.iterations = 0;
+        this.inputs = null;
+        this.outputs = null;
+        this.weights = null;
+        this.biasWeight = 0;
+        this.currentIteration = -1;
+        this.currentInputs = null;
+        this.currentOutput = -1;
+
+        this.iPer = null;
+
+        init();
+    }
 
     // GETTERS
     public int getIterations () { return iterations; }
@@ -71,6 +95,13 @@ public final class Perceptron {
         return currentOutput;
     }
 
+    public int getInputAmount() {
+        return inputAmount;
+    }
+
+    public int getType() {
+        return type;
+    }
 
     // SETTERS
     public void setInputs (double[][] inputs) {
@@ -235,5 +266,88 @@ public final class Perceptron {
         double randomWeight = (2 * rand.nextDouble()) - 1;
 
         setBiasWeight(randomWeight);
+    }
+
+
+    // NN METHODS
+    private void init () {
+        initInputs();
+        setRandomWeights();
+        setRandomBiasWeights();
+        initOutputs();
+    }
+
+    // TODO: Maybe i could use Bitsets
+    private void initInputs () {
+        double newInputs[][] = new double[(int)Math.pow(2, inputAmount)][inputAmount];
+
+        for (int x = 0; x < newInputs[0].length; x++) {
+            boolean isTrue = false;
+            int i = 0;
+            for (int y = 0; y < newInputs.length; y++) {
+                if (i == ((int)Math.pow(2, inputAmount) / 2) / (x + 1)) {
+                    isTrue = !isTrue;
+                    i = 0;
+                }
+
+                newInputs[y][x] = isTrue ? 1 : 0;
+                i++;
+            }
+        }
+        inputs = newInputs;
+    }
+
+    private void initOutputs () {
+        double[] newOutputs = new double[inputs.length];
+
+        // OR
+        if (type == NeuralNet.OR) {
+            for (int y = 0; y < inputs.length; y++) {
+                int value = 0;
+                for (int x = 0; x < inputs[y].length; x++) {
+                    if (inputs[y][x] == 1)
+                        value = 1;
+                    newOutputs[y] = value;
+                }
+            }
+        }
+
+        // AND
+        if (type == NeuralNet.AND) {
+            for (int y = 0; y < inputs.length; y++) {
+                int value = 1;
+                for (int x = 0; x < inputs[y].length; x++) {
+                    if (inputs[y][x] == 0)
+                        value = 0;
+                    newOutputs[y] = value;
+                }
+            }
+        }
+
+        // NOR
+        if (type == NeuralNet.NOR) {
+            for (int y = 0; y < inputs.length; y++) {
+                int value = 1;
+                for (int x = 0; x < inputs[y].length; x++) {
+                    if (inputs[y][x] == 1)
+                        value = 0;
+                    newOutputs[y] = value;
+                }
+            }
+        }
+
+        // NAND
+        if (type == NeuralNet.NAND) {
+            for (int y = 0; y < inputs.length; y++) {
+                int value = 0;
+                for (int x = 0; x < inputs[y].length; x++) {
+                    if (inputs[y][x] == 0)
+                        value = 1;
+                    newOutputs[y] = value;
+                }
+            }
+        }
+
+        outputs = newOutputs;
     }
 }

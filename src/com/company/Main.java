@@ -13,17 +13,42 @@ public class Main {
     public static void main(String[] args) {
         scan = new Scanner(System.in);
 
-        double[][] inputs = {
+        int[][][] hiddenLayers = {
+                {
+                    {2, NeuralNet.AND},
+                    {2, NeuralNet.AND}
+                } ,
+                {
+                    {2, NeuralNet.OR}
+                }
+        };
+
+        double[] inp = {1, 1};
+
+
+        double[] userInputs = new double[4];
+
+        userInputs[0] = inp[0];
+        userInputs[1] = inp[1] == 0 ? 1 : 0;
+        userInputs[2] = inp[0] == 0 ? 1 : 0;
+        userInputs[3] = inp[1];
+
+        NeuralNet net = new NeuralNet(hiddenLayers);
+        net.initialize();
+        net.setIterations(20000);
+        net.train();
+
+        /*double[][] inputs = {
                 {0, 0},
                 {0, 1},
                 {1, 0},
                 {1, 1}
         };
-        double[] outputs = {0, 0, 0, 1};
+        double[] outputs = {0, 1, 1, 0};
 
-        Debug debugFrame = new Debug(250);
+        //Debug debugFrame = new Debug(250);
 
-        Perceptron per = new Perceptron(20000, debugFrame);
+        Perceptron per = new Perceptron(20000);
 
         per.setInputs(inputs);
         per.setOutputs(outputs);
@@ -35,7 +60,9 @@ public class Main {
         System.out.println("Input 2: ");
         userInputs[1] = scan.nextDouble();
 
-        double finalOutput = per.think(userInputs);
+         */
+
+        double finalOutput = net.think(userInputs);
 
         DecimalFormat formatter = new DecimalFormat("0.00");
         System.out.println("Net output: " + formatter.format(finalOutput));
