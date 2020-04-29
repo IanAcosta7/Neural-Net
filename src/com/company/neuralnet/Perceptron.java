@@ -1,9 +1,10 @@
 package com.company.neuralnet;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Random;
 
-public final class Perceptron {
+public class Perceptron {
 
     // ATTRIBUTES
     private int iterations;
@@ -18,10 +19,23 @@ public final class Perceptron {
     private double currentOutput;
     private IPerceptron iPer;
 
-    // NN ATTRIBUTES
+    /*// NN ATTRIBUTES
     private int inputAmount;
-    private int type;
+    private int type;*/
 
+    public Perceptron () {
+        // DEFAULT VALUES;
+        this.iterations = 0;
+        this.inputs = null;
+        this.outputs = null;
+        this.weights = null;
+        this.biasWeight = 0;
+        this.currentIteration = -1;
+        this.currentInputs = null;
+        this.currentOutput = -1;
+
+        this.iPer = null;
+    }
 
     public Perceptron (int iterations) {
         this.iterations = iterations;
@@ -53,7 +67,7 @@ public final class Perceptron {
     }
 
     // CONSTRUCTOR FOR NN
-    public Perceptron (int inputAmount, int type) {
+    /*public Perceptron (int inputAmount, int type) {
         this.inputAmount = inputAmount;
         this.type = type;
 
@@ -70,7 +84,26 @@ public final class Perceptron {
         this.iPer = null;
 
         init();
-    }
+    }*/
+
+    // NEW CONSTRUCTOR
+    /*public Perceptron (int inputAmount) {
+        this.inputAmount = inputAmount;
+
+        // DEFAULT VALUES;
+        this.iterations = 0;
+        this.inputs = null;
+        this.outputs = null;
+        this.weights = null;
+        this.biasWeight = 0;
+        this.currentIteration = -1;
+        this.currentInputs = null;
+        this.currentOutput = -1;
+
+        this.iPer = null;
+
+        init();
+    }*/
 
     // GETTERS
     public int getIterations () { return iterations; }
@@ -95,19 +128,22 @@ public final class Perceptron {
         return currentOutput;
     }
 
+    /*
     public int getInputAmount() {
         return inputAmount;
     }
 
     public int getType() {
         return type;
-    }
+    }*/
 
     // SETTERS
     public void setInputs (double[][] inputs) {
         this.inputs = inputs;
-        setRandomWeights();
-        setRandomBiasWeights();
+        if (weights == null) {
+            setRandomWeights();
+            setRandomBiasWeights();
+        }
     }
 
     public void setOutputs (double[] outputs) {
@@ -116,10 +152,19 @@ public final class Perceptron {
 
     public void setWeights (double[] weights) {
         this.weights = weights;
+
+        //test
+        /*this.weights = new double[inputs[0].length];
+        for (int i = 0; i < inputs[0].length; i++) {
+            this.weights[i] = 1;
+        }*/
     }
 
     public void setBiasWeight(double biasWeight) {
         this.biasWeight = biasWeight;
+
+        //test
+        //this.biasWeight = 1;
     }
 
     public void setIterations (int iterations) {
@@ -148,6 +193,11 @@ public final class Perceptron {
         double[] final_outputs  = think(inputs);
 
         correctPerceptron(final_outputs);
+    }
+
+    //TODO: WILL NEED TO RETURN AN ARRAY OF OUTPUTS
+    public double think () {
+        return think(inputs[0]);
     }
 
     public double think (double[] inputs) {
@@ -229,10 +279,11 @@ public final class Perceptron {
         adjustBiasWeights(adjustments);
     }
 
-    private void adjustWeights(double[] adjustments) {
+    public void adjustWeights(double[] adjustments) {
         for (int c = 0; c < inputs[0].length; c++) {
             for (int f = 0; f < inputs.length; f++) {
-                weights[c] += inputs[f][c] * adjustments[f];
+                double realAdjustment = inputs[f][c] * adjustments[f];
+                weights[c] += realAdjustment;
             }
 
             if (iPer != null)
@@ -240,7 +291,7 @@ public final class Perceptron {
         }
     }
 
-    private void adjustBiasWeights(double[] adjustments) {
+    public void adjustBiasWeights(double[] adjustments) {
         for (int f = 0; f < adjustments.length; f++) {
             biasWeight += 1 * adjustments[f];
         }
@@ -271,12 +322,13 @@ public final class Perceptron {
 
     // NN METHODS
     private void init () {
-        initInputs();
+        //initInputs();
         setRandomWeights();
         setRandomBiasWeights();
-        initOutputs();
+        //initOutputs();
     }
 
+    /*
     // TODO: Maybe i could use Bitsets
     private void initInputs () {
         double newInputs[][] = new double[(int)Math.pow(2, inputAmount)][inputAmount];
@@ -295,9 +347,9 @@ public final class Perceptron {
             }
         }
         inputs = newInputs;
-    }
+    }*/
 
-    private void initOutputs () {
+    /*private void initOutputs () {
         double[] newOutputs = new double[inputs.length];
 
         // OR
@@ -349,5 +401,5 @@ public final class Perceptron {
         }
 
         outputs = newOutputs;
-    }
+    }*/
 }

@@ -35,8 +35,8 @@ We will use a Normalizing Function called the **Sigmoid Function**, this functio
 ## Training
 Now that we know how the Perceptron works we could try it and it should give us an Output. But this Output, probably won't be right, because our Perceptron is calculating it through random weights. So we will tell the Perceptron how to **adjust these weights** through a process called **Training**, so every time we ask  for a new situation the Perceptron will get better and better.  
 
-The first thing we need to do to **Train** the Perceptron is calculate the **error**. The error is *the difference between the output given by the Perceptron, and the actual output*. We need to calculate this for every output.  
-`error = output - actualOutput`  
+The first thing we need to do to **Train** the Perceptron is calculate the **error**. The error is *the difference between the real output, and the output given by the Perceptron*. We need to calculate this for every output.  
+`error = actualOutpur - output`  
 
 Once we have the error, we can adjust the weights with a formula called the **Error Weighted Derivative**. That looks like this:  
 `adjustments = error * inputs`
