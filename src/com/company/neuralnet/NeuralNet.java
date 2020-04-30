@@ -145,16 +145,30 @@ public class NeuralNet {
             double adjustments;
 
             // Last layer only haves one output
-            double error = lastLayer.get(i).getOutputs()[0] - outputs[i];
-            lastLayer.get(i).setError(error);
+            //double error = lastLayer.get(i).getOutputs()[0] - outputs[i];
 
-            adjustments = error * lastLayer.get(i).sigmoidDerivative(outputs[i]);
+            // ------------
+            double totalError = lastLayer.get(i).getOutputs()[0] - outputs[i];
+            double[] errorPerWeight = new double[lastLayer.get(i).getWeights().length];
 
-            //TODO TEST
-            //lastLayer.get(i).adjustWeights(new double[]{adjustments});
-            //lastLayer.get(i).adjustBiasWeights(new double[]{adjustments});
+            for (int j = 0; j < lastLayer.get(i).getWeights().length; j++) {
+                double weightSum = 0;
+                for (int k = 0; k < lastLayer.get(i).getWeights().length; k++) {
+                    weightSum += lastLayer.get(i).getWeights()[k];
+                }
+                weightSum += lastLayer.get(i).getBiasWeight();
+                errorPerWeight[j] = totalError * (lastLayer.get(i).getWeights()[j] / weightSum);
 
-            lastLayer.get(i).setAdjustment(new double[]{adjustments});
+                if (j == 0)
+                    lastLayer.get(i).setBiasError(totalError * (lastLayer.get(i).getBiasWeight() / weightSum));
+            }
+            // ------------
+
+            lastLayer.get(i).setError(errorPerWeight);
+            //adjustments = error * lastLayer.get(i).sigmoidDerivative(outputs[i]);
+
+
+            lastLayer.get(i).setAdjustment(errorPerWeight);
 
             /*for (int j = 0; j < lastLayer.get(i).getOutputNodes().size(); j++) {
                 adjustments = new double[lastLayer.get(i).getOutputNodes().size()];
@@ -174,7 +188,7 @@ public class NeuralNet {
             // CALCULATE ERROR
             for (int j = 0; j < layers.get(i).size(); j++) {
                 SmartPerceptron perceptron = layers.get(i).get(j);
-                double hidError = 0;
+                double totalHidError = 0;
                 //double[] adjustments = new double[perceptron.getWeights().length];
                 double adjustment;
 
@@ -183,17 +197,47 @@ public class NeuralNet {
                     SmartPerceptron nextLayerPerceptron = layers.get(i + 1).get(k);
 
                     // Calculate weight sum
-                    double weightSum = 0;
+                    /*double weightSum = 0;
                     for (int l = 0; l < nextLayerPerceptron.getWeights().length; l++) {
                         weightSum += nextLayerPerceptron.getWeights()[l];
                     }
                     double hiddenWeight = nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
-                    double weightCalculus = hiddenWeight / weightSum;
+                    double weightCalculus = hiddenWeight / weightSum;*/
 
-                    hidError +=  weightCalculus * nextLayerPerceptron.getError();
+                    //double nextLayerError = 0;
+
+                    /*for (int l = 0; l < layers.get(i + 1).size(); l++) { //same loop as before, this is bad...
+                        for (int m = 0; m < layers.get(i + 1).get(l).getInputNodes().size(); m++) {
+                            if (layers.get(i + 1).get(l).getInputNodes().get(m).equals(perceptron.getName()))
+                                nextLayerError += layers.get(i + 1).get(l).getError()[m];
+                        }
+                    }*/
+
+                    double nextLayerError = nextLayerPerceptron.getError()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+
+                    //totalHidError +=  weightCalculus * nextLayerError;
+                    totalHidError += nextLayerError;
                 }
 
-                perceptron.setError(hidError);
+
+                // ------------
+                double[] errorPerWeight = new double[perceptron.getWeights().length];
+
+                for (int k = 0; k < perceptron.getWeights().length; k++) {
+                    double weightSum = 0;
+                    for (int l = 0; l < perceptron.getWeights().length; l++) {
+                        weightSum += perceptron.getWeights()[l];
+                    }
+                    weightSum += perceptron.getBiasWeight();
+                    errorPerWeight[k] = totalHidError * (perceptron.getWeights()[k] / weightSum);
+
+                    if (k == 0)
+                        perceptron.setBiasError(totalHidError * (perceptron.getBiasWeight() / weightSum));
+                }
+                // ------------
+
+                perceptron.setError(errorPerWeight);
+                perceptron.setAdjustment(errorPerWeight);
 
                 // ADJUST WEIGHTS
                 /*for (int k = 0; k < perceptron.getWeights().length; k++) {
@@ -201,12 +245,12 @@ public class NeuralNet {
                     //adjustments[k] = hidError * perceptron.sigmoidDerivative(perceptron.getInputs()[0][k]) * perceptron.getInputs()[0][k];
                 }*/
 
-                adjustment = hidError * perceptron.sigmoidDerivative(perceptron.getCurrentOutput());
+                //adjustment = hidError * perceptron.sigmoidDerivative(perceptron.getCurrentOutput());
 
                 //TODO TEST
                 //perceptron.adjustWeights(new double[]{adjustment});
                 //perceptron.adjustBiasWeights(new double[]{adjustment});
-                perceptron.setAdjustment(new double[]{adjustment});
+                //perceptron.setAdjustment(new double[]{adjustment});
             }
         }
         adjustAll();
@@ -215,11 +259,19 @@ public class NeuralNet {
     private void adjustAll() {
         for (ArrayList<SmartPerceptron> layer : layers) {
             for (SmartPerceptron perceptron : layer) {
-                perceptron.adjustWeights(perceptron.getAdjustment());
-                perceptron.adjustBiasWeights(perceptron.getAdjustment());
+                perceptron.adjustWeights2(perceptron.getError());
+                perceptron.adjustBiasWeights2(perceptron.getBiasError());
             }
         }
     }
+
+    /*private double calculateAdjustment (double error, double thisOutput, double thisInput) {
+        double adjustment;
+
+        // f: finalLayer p: previousLayers
+        // -(error) * sigmoidDerivative(fO) * pO
+        adjustment = -error * layers.get(0).get(0).sigmoidDerivative(thisOutput) * thisInput;
+    }*/
 
     public static double not (double i) {
         return i == 0 ? 1 : 0;
