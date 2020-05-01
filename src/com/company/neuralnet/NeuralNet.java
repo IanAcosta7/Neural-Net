@@ -149,14 +149,8 @@ public class NeuralNet {
             SmartPerceptron lastLayerPerceptron = layers.get(layers.size() - 1).get(i);
 
             double totalError = -(lastLayerPerceptron.getOutputs()[0] - outputs[i]);
-            double[] errorPerWeight = new double[lastLayerPerceptron.getWeights().length];
 
-            for (int j = 0; j < errorPerWeight.length; j++) {
-                errorPerWeight[j] = totalError;
-            }
-
-            lastLayerPerceptron.setError(errorPerWeight);
-            lastLayerPerceptron.setBiasError(errorPerWeight[0]);
+            lastLayerPerceptron.setPartialError(totalError);
         }
 
         // BACKPROPAGATE
@@ -164,24 +158,18 @@ public class NeuralNet {
             // CALCULATE ERROR
             for (int j = 0; j < layers.get(i).size(); j++) {
                 SmartPerceptron perceptron = layers.get(i).get(j);
-                double[] errorPerWeight = new double[perceptron.getWeights().length];
-                double biasError = 0;
+                double partialError = 0;
 
                 // Foreach perceptron in the next layer
                 for (int k = 0; k < layers.get(i + 1).size(); k++) {
                     SmartPerceptron nextLayerPerceptron = layers.get(i + 1).get(k);
 
-                    double nextLayerError = nextLayerPerceptron.getError()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+                    double nextLayerError = nextLayerPerceptron.getPartialError();
 
-                    for (int l = 0; l < errorPerWeight.length; l++) {
-                        errorPerWeight[l] = nextLayerError * Perceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
-                    }
-                    if (biasError == 0)
-                        biasError = nextLayerError * Perceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+                    partialError += nextLayerError * Perceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
                 }
 
-                perceptron.setError(errorPerWeight);
-                perceptron.setBiasError(biasError);
+                perceptron.setPartialError(partialError);
             }
         }
         adjustAll();
@@ -190,8 +178,8 @@ public class NeuralNet {
     private void adjustAll() {
         for (ArrayList<SmartPerceptron> layer : layers) {
             for (SmartPerceptron perceptron : layer) {
-                perceptron.adjustWeights(perceptron.getError());
-                perceptron.adjustBiasWeights(perceptron.getBiasError());
+                perceptron.adjustWeights(perceptron.getPartialError());
+                perceptron.adjustBiasWeights(perceptron.getPartialError());
             }
         }
     }

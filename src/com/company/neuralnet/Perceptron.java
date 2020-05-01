@@ -149,10 +149,10 @@ public class Perceptron {
         return outputs;
     }
 
-    public void adjustWeights(double[] errors) {
+    public void adjustWeights(double error) {
         for (int c = 0; c < inputs[0].length; c++) {
             for (int f = 0; f < inputs.length; f++) {
-                double realAdjustment = 0.5 * inputs[f][c] * errors[f] * sigmoidDerivative(currentOutput);
+                double realAdjustment = 0.5 * inputs[f][c] * error * sigmoidDerivative(currentOutput);
                 weights[c] -= realAdjustment;
             }
 

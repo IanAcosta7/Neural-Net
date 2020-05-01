@@ -8,8 +8,7 @@ public class SmartPerceptron extends Perceptron {
     private String name;
     private ArrayList<String> inputNodes;
     private ArrayList<String> outputNodes;
-    private double[] errors;
-    private double biasError;
+    private double partialError;
 
 
     // CONSTRUCTOR
@@ -32,12 +31,8 @@ public class SmartPerceptron extends Perceptron {
         return outputNodes;
     }
 
-    public double[] getError() {
-        return errors;
-    }
-
-    public double getBiasError() {
-        return biasError;
+    public double getPartialError() {
+        return partialError;
     }
 
     // SETTERS
@@ -49,13 +44,10 @@ public class SmartPerceptron extends Perceptron {
         this.outputNodes.add(name);
     }
 
-    public void setError(double[] error) {
-        this.errors = error;
+    public void setPartialError(double partialError) {
+        this.partialError = partialError;
     }
 
-    public void setBiasError(double biasError) {
-        this.biasError = biasError;
-    }
 // METHODS
 
 
