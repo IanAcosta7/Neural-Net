@@ -184,13 +184,9 @@ public class NeuralNet {
     private void adjustAll() {
         for (ArrayList<SmartPerceptron> layer : layers) {
             for (SmartPerceptron perceptron : layer) {
-                perceptron.adjustWeights2(perceptron.getError());
-                perceptron.adjustBiasWeights2(perceptron.getBiasError());
+                perceptron.adjustWeights(perceptron.getError());
+                perceptron.adjustBiasWeights(perceptron.getBiasError());
             }
         }
-    }
-
-    public static double not (double i) {
-        return i == 0 ? 1 : 0;
     }
 }
