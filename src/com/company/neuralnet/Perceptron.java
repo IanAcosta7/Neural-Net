@@ -151,20 +151,20 @@ public class Perceptron {
     }
 
     public void setWeights (double[] weights) {
-        //this.weights = weights;
+        this.weights = weights;
 
         //test
-        this.weights = new double[inputs[0].length];
+        /*this.weights = new double[inputs[0].length];
         for (int i = 0; i < inputs[0].length; i++) {
             this.weights[i] = 1;
-        }
+        }*/
     }
 
     public void setBiasWeight(double biasWeight) {
-        //this.biasWeight = biasWeight;
+        this.biasWeight = biasWeight;
 
         //test
-        this.biasWeight = 1;
+        //this.biasWeight = 1;
     }
 
     public void setIterations (int iterations) {
@@ -214,6 +214,7 @@ public class Perceptron {
         }
 
         output += 1 * biasWeight;
+        //currentOutput = output;
         output = sigmoid(output); // sigmoid(x1 * w1 + x2 * w2 + x3 * w3 + 1 * biasWeight)
 
         currentOutput = output;
@@ -294,8 +295,8 @@ public class Perceptron {
     public void adjustWeights2(double[] errors) {
         for (int c = 0; c < inputs[0].length; c++) {
             for (int f = 0; f < inputs.length; f++) {
-                double realAdjustment = inputs[f][c] * errors[f] * sigmoidDerivative(currentOutput);
-                weights[c] += realAdjustment;
+                double realAdjustment = 0.5 * inputs[f][c] * errors[f] * sigmoidDerivative(currentOutput);
+                weights[c] -= realAdjustment;
             }
 
             if (iPer != null)
@@ -310,7 +311,7 @@ public class Perceptron {
     }
 
     public void adjustBiasWeights2(double error) {
-            biasWeight += 1 * error * sigmoidDerivative(currentOutput);
+            biasWeight -= 0.5 * 1 * error * sigmoidDerivative(currentOutput);
     }
 
     private void setRandomWeights () {

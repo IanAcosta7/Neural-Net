@@ -36,6 +36,8 @@ public class Main {
 
         // Connections
         net.connect("0", "00");
+        net.connect("0", "01");
+        net.connect("1", "00");
         net.connect("1", "01");
         net.connect("00", "10");
         net.connect("01", "10");
@@ -54,8 +56,6 @@ public class Main {
             net.train(inputs[1], outputs[1]);
             net.train(inputs[2], outputs[2]);
             net.train(inputs[3], outputs[3]);
-            if (i == 19998)
-                System.out.println("test");
         }
 
         double[] newInputs = {0, 0};

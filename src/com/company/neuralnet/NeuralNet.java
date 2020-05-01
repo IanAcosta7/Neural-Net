@@ -26,18 +26,18 @@ public class NeuralNet {
     }
 
     public void setInputs (double[] inputs) {
-        int d = 0;
         for (SmartPerceptron perceptron : layers.get(0)) { // FOREACH FIRST LAYER PERCEPTRON
             double[][] newInputs = new double[1][0];
-            for (String inputName : perceptron.getInputNodes()) { // FOREACH INPUT NODE
-                if (inputName.equals(Integer.toString(d))) {
-                    double[][] auxInputs = new double[1][newInputs[0].length + 1];
-                    for (int j = 0; j < newInputs[0].length; j++) {
-                        auxInputs[0][j] = newInputs[0][j];
+            for (int i = 0; i < inputs.length;i++) {
+                for (String inputName : perceptron.getInputNodes()) { // FOREACH INPUT NODE
+                    if (inputName.equals(Integer.toString(i))) {
+                        double[][] auxInputs = new double[1][newInputs[0].length + 1];
+                        for (int j = 0; j < newInputs[0].length; j++) {
+                            auxInputs[0][j] = newInputs[0][j];
+                        }
+                        auxInputs[0][newInputs[0].length] = inputs[i];
+                        newInputs = auxInputs;
                     }
-                    auxInputs[0][newInputs[0].length] = inputs[d];
-                    newInputs = auxInputs;
-                    d++;
                 }
             }
             perceptron.setInputs(newInputs);
@@ -148,10 +148,14 @@ public class NeuralNet {
             //double error = lastLayer.get(i).getOutputs()[0] - outputs[i];
 
             // ------------
-            double totalError = lastLayer.get(i).getOutputs()[0] - outputs[i];
+            double totalError = -(lastLayer.get(i).getOutputs()[0] - outputs[i]);
             double[] errorPerWeight = new double[lastLayer.get(i).getWeights().length];
 
-            for (int j = 0; j < lastLayer.get(i).getWeights().length; j++) {
+            for (int j = 0; j < errorPerWeight.length; j++) {
+                errorPerWeight[j] = totalError;
+            }
+
+            /*for (int j = 0; j < lastLayer.get(i).getWeights().length; j++) {
                 double weightSum = 0;
                 for (int k = 0; k < lastLayer.get(i).getWeights().length; k++) {
                     weightSum += lastLayer.get(i).getWeights()[k];
@@ -161,10 +165,11 @@ public class NeuralNet {
 
                 if (j == 0)
                     lastLayer.get(i).setBiasError(totalError * (lastLayer.get(i).getBiasWeight() / weightSum));
-            }
+            }*/
             // ------------
 
             lastLayer.get(i).setError(errorPerWeight);
+            lastLayer.get(i).setBiasError(errorPerWeight[0]);
             //adjustments = error * lastLayer.get(i).sigmoidDerivative(outputs[i]);
 
 
@@ -188,7 +193,9 @@ public class NeuralNet {
             // CALCULATE ERROR
             for (int j = 0; j < layers.get(i).size(); j++) {
                 SmartPerceptron perceptron = layers.get(i).get(j);
+                double[] errorPerWeight = new double[perceptron.getWeights().length];
                 double totalHidError = 0;
+                double biasError = 0;
                 //double[] adjustments = new double[perceptron.getWeights().length];
                 double adjustment;
 
@@ -215,15 +222,23 @@ public class NeuralNet {
 
                     double nextLayerError = nextLayerPerceptron.getError()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
 
+                    for (int l = 0; l < errorPerWeight.length; l++) {
+                        errorPerWeight[l] = nextLayerError * nextLayerPerceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+                    }
+                    if (biasError == 0) {
+                        biasError = nextLayerError * nextLayerPerceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+                    }
+
+
                     //totalHidError +=  weightCalculus * nextLayerError;
-                    totalHidError += nextLayerError;
+                    //totalHidError += nextLayerError;
                 }
 
 
                 // ------------
-                double[] errorPerWeight = new double[perceptron.getWeights().length];
+                //double[] errorPerWeight = new double[perceptron.getWeights().length];
 
-                for (int k = 0; k < perceptron.getWeights().length; k++) {
+                /*for (int k = 0; k < perceptron.getWeights().length; k++) {
                     double weightSum = 0;
                     for (int l = 0; l < perceptron.getWeights().length; l++) {
                         weightSum += perceptron.getWeights()[l];
@@ -233,10 +248,12 @@ public class NeuralNet {
 
                     if (k == 0)
                         perceptron.setBiasError(totalHidError * (perceptron.getBiasWeight() / weightSum));
-                }
+                }*/
                 // ------------
 
+
                 perceptron.setError(errorPerWeight);
+                perceptron.setBiasError(biasError);
                 perceptron.setAdjustment(errorPerWeight);
 
                 // ADJUST WEIGHTS
