@@ -43,20 +43,9 @@ public class Main {
         net.connect("01", "10");
         net.connect("10", "0");
 
-        net.setIterations(1);
-        /*for (int i = 0; i < inputs.length; i++) {
-            Random rand = new Random();
+        net.setIterations(20000);
 
-            int random = rand.nextInt((3 - 0) + 1) + 0;
-
-            net.train(inputs[random], outputs[random]);
-        }*/
-        for (int i = 0; i < 20000; i++) {
-            net.train(inputs[0], outputs[0]);
-            net.train(inputs[1], outputs[1]);
-            net.train(inputs[2], outputs[2]);
-            net.train(inputs[3], outputs[3]);
-        }
+        net.train(inputs, outputs);
 
         double[] newInputs = {0, 0};
 

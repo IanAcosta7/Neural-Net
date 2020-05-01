@@ -76,6 +76,17 @@ public class Perceptron {
     }
 
     // METHODS
+    public static double sigmoid (double x) {
+        // this is the sigmoid function "1 / (1 + exp(-x))", it normalizes the value received between 1 and -1
+        return 1 / (1 + Math.exp(-x));
+    }
+
+    public static double sigmoidDerivative (double x) {
+        // Sigmoid derivative controls the learning rate
+        return x * (1 - x);
+    }
+
+
     //TODO: WILL NEED TO RETURN AN ARRAY OF OUTPUTS
     public double think () {
         return think(inputs[0]);
@@ -136,16 +147,6 @@ public class Perceptron {
         }
 
         return outputs;
-    }
-
-    public double sigmoid (double x) {
-        // this is the sigmoid function "1 / (1 + exp(-x))", it normalizes the value received between 1 and -1
-        return 1 / (1 + Math.exp(-x));
-    }
-
-    public double sigmoidDerivative (double x) {
-        // Sigmoid derivative controls the learning rate
-        return x * (1 - x);
     }
 
     public void adjustWeights(double[] errors) {

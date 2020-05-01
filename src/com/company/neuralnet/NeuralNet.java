@@ -1,6 +1,7 @@
 package com.company.neuralnet;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class NeuralNet {
 
@@ -12,6 +13,7 @@ public class NeuralNet {
     // CONSTRUCTOR
     public NeuralNet (int[] layers) {
         this.layers = new ArrayList<>();
+        this.iterations = 0;
         initLayers(layers);
     }
 
@@ -64,6 +66,23 @@ public class NeuralNet {
     }
 
     // METHODS
+    public void train (double[][] inputs, double[][] outputs) {
+        Random rand = new Random();
+
+        if (inputs.length == outputs.length) {
+            for (int i = 0; i < iterations; i++) {
+                //Train a random set of inputs
+                int number = rand.nextInt(inputs.length);
+
+                setInputs(inputs[number]);
+                setOutputs(outputs[number]);
+
+                practice();
+            }
+        }
+    }
+
+    // TODO METHODS TO REFACTOR:
     private void initLayers (int[] layers) {
         for (int i = 0; i < layers.length; i++) {
             this.layers.add(new ArrayList<>());
@@ -94,19 +113,6 @@ public class NeuralNet {
         }
 
         return result;
-    }
-
-    public void train (double[] inputs, double outputs[]) {
-
-        // TODO: THIS NEEDS TO BE CHANGED
-        // Set first inputs
-        setInputs(inputs);
-        setOutputs(outputs);
-
-
-        for (int i = 0; i < iterations; i++) {
-            practice();
-        }
     }
 
     private void practice () {
@@ -168,10 +174,10 @@ public class NeuralNet {
                     double nextLayerError = nextLayerPerceptron.getError()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
 
                     for (int l = 0; l < errorPerWeight.length; l++) {
-                        errorPerWeight[l] = nextLayerError * nextLayerPerceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+                        errorPerWeight[l] = nextLayerError * Perceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
                     }
                     if (biasError == 0)
-                        biasError = nextLayerError * nextLayerPerceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+                        biasError = nextLayerError * Perceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
                 }
 
                 perceptron.setError(errorPerWeight);
