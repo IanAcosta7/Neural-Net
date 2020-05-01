@@ -9,7 +9,6 @@ public class SmartPerceptron extends Perceptron {
     private ArrayList<String> inputNodes;
     private ArrayList<String> outputNodes;
     private double[] errors;
-    private double[] adjustment;
     private double biasError;
 
 
@@ -37,10 +36,6 @@ public class SmartPerceptron extends Perceptron {
         return errors;
     }
 
-    public double[] getAdjustment() {
-        return adjustment;
-    }
-
     public double getBiasError() {
         return biasError;
     }
@@ -56,10 +51,6 @@ public class SmartPerceptron extends Perceptron {
 
     public void setError(double[] error) {
         this.errors = error;
-    }
-
-    public void setAdjustment(double[] adjustment) {
-        this.adjustment = adjustment;
     }
 
     public void setBiasError(double biasError) {
