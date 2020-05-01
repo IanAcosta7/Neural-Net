@@ -74,10 +74,7 @@ public class NeuralNet {
                 //Train a random set of inputs
                 int number = rand.nextInt(inputs.length);
 
-                setInputs(inputs[number]);
-                setOutputs(outputs[number]);
-
-                practice();
+                practice(inputs[number], outputs[number]);
             }
         }
     }
@@ -115,14 +112,28 @@ public class NeuralNet {
         return result;
     }
 
-    private void practice () {
-        double[] outputs = think();
+    private void practice (double[] tInputs, double[] tOutputs) {
+        double[] outputs = think(tInputs);
+
+        setOutputs(tOutputs);
 
         correct(outputs);
     }
 
-    public double[] think () {
+    public double[][] think (double[][] tInputs) {
+        double[][] outputs = new double[tInputs.length][tInputs[0].length];
+
+        for (int i = 0; i < tInputs.length; i++) {
+            outputs[i] = think(tInputs[i]);
+        }
+
+        return outputs;
+    }
+
+    public double[] think (double[] tInputs) {
         double[] outputs = null;
+
+        setInputs(tInputs);
 
         // THINKING PROCESS
         for (int i = 0; i < layers.size(); i++) {

@@ -1,12 +1,9 @@
 package com.company;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
 
 import com.company.neuralnet.*;
-import com.company.neuralnet.views.*;
 
 public class Main {
 
@@ -47,44 +44,18 @@ public class Main {
 
         net.train(inputs, outputs);
 
-        double[] newInputs = {0, 0};
+        double[][] newInputs = {
+                {0, 0},
+                {0, 1},
+                {1, 0},
+                {1, 1}
+        };
 
-        net.setInputs(newInputs);
-        double finalOutputs[] = net.think();
-
-        for (int i = 0; i < finalOutputs.length; i++) {
-            DecimalFormat formatter = new DecimalFormat("0.00");
-            System.out.println("Net output: " + formatter.format(finalOutputs[i]));
-        }
-
-        double[] newInputs2 = {0, 1};
-
-        net.setInputs(newInputs2);
-        double finalOutputs2[] = net.think();
+        double finalOutputs[][] = net.think(newInputs);
 
         for (int i = 0; i < finalOutputs.length; i++) {
             DecimalFormat formatter = new DecimalFormat("0.00");
-            System.out.println("Net output: " + formatter.format(finalOutputs2[i]));
-        }
-
-        double[] newInputs3 = {1, 0};
-
-        net.setInputs(newInputs3);
-        double finalOutputs3[] = net.think();
-
-        for (int i = 0; i < finalOutputs.length; i++) {
-            DecimalFormat formatter = new DecimalFormat("0.00");
-            System.out.println("Net output: " + formatter.format(finalOutputs3[i]));
-        }
-
-        double[] newInputs4 = {1, 1};
-
-        net.setInputs(newInputs4);
-        double finalOutputs4[] = net.think();
-
-        for (int i = 0; i < finalOutputs.length; i++) {
-            DecimalFormat formatter = new DecimalFormat("0.00");
-            System.out.println("Net output: " + formatter.format(finalOutputs4[i]));
+            System.out.println("Net output: " + formatter.format(finalOutputs[i][0]));
         }
     }
 }
