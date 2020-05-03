@@ -28,9 +28,9 @@ public final class Data extends Component {
     // SETTERS
     public void setPerceptron(Perceptron per) {
         this.perceptron = per;
-        if (per.getCurrentInputs() != null) {
+        if (per.getTInputs() != null) {
             super.setWidth(separation * 7);
-            super.setHeight(separation * per.getCurrentInputs().length);
+            super.setHeight(separation * per.getTInputs().length);
         }
         drawData();
     }
@@ -40,17 +40,17 @@ public final class Data extends Component {
     private void drawData () {
         DecimalFormat formatter = new DecimalFormat("0.00");
 
-        if (perceptron.getCurrentInputs() != null && perceptron.getWeights() != null && !Double.isNaN(perceptron.getCurrentOutput())) {
-            for (int i = 0; i < perceptron.getCurrentInputs().length; i++) {
+        if (perceptron.getTInputs() != null && perceptron.getWeights() != null && !Double.isNaN(perceptron.getOutput())) {
+            for (int i = 0; i < perceptron.getTInputs().length; i++) {
                 // Draw inputs
-                g.drawString(formatter.format(perceptron.getCurrentInputs()[i]), xPointer, yPointer + i * separation);
+                g.drawString(formatter.format(perceptron.getTInputs()[i]), xPointer, yPointer + i * separation);
 
                 // Draw weights
                 g.drawString(formatter.format(perceptron.getWeights()[i]), xPointer + separation * 2, yPointer + i * separation);
             }
 
             // Draw output
-            g.drawString(formatter.format(perceptron.getCurrentOutput()), xPointer + separation * 4, yPointer);
+            g.drawString(formatter.format(perceptron.getOutput()), xPointer + separation * 4, yPointer);
         }
     }
 }

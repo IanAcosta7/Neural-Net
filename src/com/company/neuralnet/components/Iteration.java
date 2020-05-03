@@ -22,7 +22,10 @@ public class Iteration extends Component{
         this.yPointer = y + separation;
     }
 
+
     // SETTERS
+    //TODO: NEED TO IMPLEMENT THIS
+    /*
     public void setPerceptron (Perceptron per) {
         perceptron = per;
         drawIterations();
@@ -34,4 +37,5 @@ public class Iteration extends Component{
             g.drawString(perceptron.getCurrentIteration() + " / " + perceptron.getIterations(), xPointer, yPointer);
         }
     }
+    */
 }
