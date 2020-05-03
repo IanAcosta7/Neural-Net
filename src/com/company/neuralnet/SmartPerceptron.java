@@ -2,7 +2,7 @@ package com.company.neuralnet;
 
 import java.util.ArrayList;
 
-public class SmartPerceptron extends Perceptron {
+public class SmartPerceptron extends NetPerceptron {
 
     // ATTRIBUTES
     private String name;
