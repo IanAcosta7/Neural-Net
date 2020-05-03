@@ -30,9 +30,9 @@ public class Scheme extends Component {
     //SETTERS
     public void setPerceptron (Perceptron per) {
         this.perceptron = per;
-        if (per.getCurrentInputs() != null) {
+        if (per.getTInputs() != null) {
             super.setWidth(separation * 9);
-            super.setHeight(separation * per.getCurrentInputs().length);
+            super.setHeight(separation * per.getTInputs().length);
         }
         drawScheme();
     }
@@ -45,17 +45,17 @@ public class Scheme extends Component {
 
     // METHODS
     public void drawScheme () {
-        if (perceptron.getCurrentInputs() != null && perceptron.getWeights() != null && !Double.isNaN(perceptron.getCurrentOutput())) {
-            for (int i = 0; i < perceptron.getCurrentInputs().length; i++) {
+        if (perceptron.getTInputs() != null && perceptron.getWeights() != null && !Double.isNaN(perceptron.getOutput())) {
+            for (int i = 0; i < perceptron.getTInputs().length; i++) {
                 // Draw Inputs
-                if (perceptron.getCurrentInputs()[i] > 0.5)
+                if (perceptron.getTInputs()[i] > 0.5)
                     g.setColor(Color.GREEN);
                 else
                     g.setColor(Color.BLACK);
                 g.drawLine(xPointer, yPointer + (i * separation), xPointer + separation * 4, (yPointer + super.getHeight() / 2) - separation / 2);
             }
             // Draw Output
-            if (perceptron.getCurrentOutput() > 0.5)
+            if (perceptron.getOutput() > 0.5)
                 g.setColor(Color.GREEN);
             else
                 g.setColor(Color.BLACK);

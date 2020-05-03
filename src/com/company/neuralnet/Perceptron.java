@@ -2,88 +2,69 @@ package com.company.neuralnet;
 
 import java.util.Random;
 
-public final class Perceptron {
+public class Perceptron {
 
     // ATTRIBUTES
-    private int iterations;
-    private double[][] inputs;
-    private double[] outputs;
+    private double[] tInputs;
+    private double tOutput;
+    private double output;
     private double[] weights;
     private double biasWeight;
+    private double lr;
 
-    // DEBUGGING OPTIONAL ATTRIBUTES
-    private int currentIteration;
-    private double[] currentInputs;
-    private double currentOutput;
+    // DEBUGGING OPTIONAL ATTRIBUTE
     private IPerceptron iPer;
 
 
-    public Perceptron (int iterations) {
-        this.iterations = iterations;
-        // DEFAULT VALUES;
-        this.inputs = null;
-        this.outputs = null;
-        this.weights = null;
+    public Perceptron(int inputs, double lr) {
+        this.tInputs = new double[inputs];
+        this.tOutput = 0;
+        this.output = Double.NaN;
+        this.weights = new double[inputs];
+        this.lr = lr;
         this.biasWeight = 0;
-        this.currentIteration = -1;
-        this.currentInputs = null;
-        this.currentOutput = -1;
-
         this.iPer = null;
     }
 
-    public Perceptron (int iterations, IPerceptron iPer) {
-        this.iterations = iterations;
-        // DEFAULT VALUES
-        this.inputs = null;
-        this.outputs = null;
-        this.weights = null;
+    public Perceptron(int inputs, double lr, IPerceptron iPer) {
+        this.tInputs = new double[inputs];
+        this.tOutput = 0;
+        this.output = Double.NaN;
+        this.weights = new double[inputs];
+        this.lr = lr;
         this.biasWeight = 0;
-        this.currentIteration = -1;
-        this.currentInputs = null;
-        this.currentOutput = -1;
-
         this.iPer = iPer;
-        this.iPer.updatePerceptron(this, true);
     }
 
 
     // GETTERS
-    public int getIterations () { return iterations; }
+    public double[] getTInputs() {
+        return tInputs;
+    }
 
-    public double[][] getInputs () { return inputs; }
+    public double getTOutput() {
+        return tOutput;
+    }
 
-    public double[] getOutputs () { return outputs; }
+    public double getOutput() {
+        return output;
+    }
 
-    public double[] getWeights () { return weights; }
+    public double[] getWeights() {
+        return weights;
+    }
 
     public double getBiasWeight() {
         return biasWeight;
     }
 
-    public double[] getCurrentInputs () { return currentInputs; }
-
-    public int getCurrentIteration () {
-        return currentIteration;
-    }
-
-    public double getCurrentOutput () {
-        return currentOutput;
+    public double getLr() {
+        return lr;
     }
 
 
     // SETTERS
-    public void setInputs (double[][] inputs) {
-        this.inputs = inputs;
-        setRandomWeights();
-        setRandomBiasWeights();
-    }
-
-    public void setOutputs (double[] outputs) {
-        this.outputs = outputs;
-    }
-
-    public void setWeights (double[] weights) {
+    public void setWeights(double[] weights) {
         this.weights = weights;
     }
 
@@ -91,51 +72,43 @@ public final class Perceptron {
         this.biasWeight = biasWeight;
     }
 
-    public void setIterations (int iterations) {
-        this.iterations = iterations;
+    public void setLr(double lr) {
+        this.lr = lr;
+    }
+
+    public void setIPer(IPerceptron iPer) {
+        this.iPer = iPer;
     }
 
 
     // METHODS
-    public void train () {
-        if (inputs == null) throw new NullPointerException("inputs equals null");
-        if (outputs == null) throw new NullPointerException("outputs equals null");
+    public void practice (double[] inputs, double output) {
+        tInputs = inputs;
+        tOutput = output;
 
-        for (int i = 0; i < iterations; i++) {
-            if (iPer != null) {
-                currentIteration = i + 1;
-                iPer.wait(this::practice);
-                iPer.updatePerceptron(this, false);
-            }
-            else {
-                practice();
-            }
-        }
-    }
+        think(tInputs);
 
-    public void practice() {
-        double[] final_outputs  = think(inputs);
-
-        correctPerceptron(final_outputs);
+        correctPerceptron();
     }
 
     public double think (double[] inputs) {
-        double output = 0;
+        output = 0;
 
-        currentInputs = inputs;
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
             iPer.setState(this, true);
         }
 
+        // ---------- PROCESS INPUTS ---------- //
+        double z = 0;
         for (int i = 0; i < inputs.length; i++) {
-            output += inputs[i] * weights[i];
+            z += inputs[i] * weights[i];
         }
+        z += biasWeight;
 
-        output += 1 * biasWeight;
-        output = sigmoid(output); // sigmoid(x1 * w1 + x2 * w2 + x3 * w3 + 1 * biasWeight)
+        output = sigmoid(z); // sigmoid(x1 * w1 + x2 * w2 + x3 * w3 + 1 * biasWeight)
+        // ----------------------------------- //
 
-        currentOutput = output;
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
             iPer.setState(this, false);
@@ -144,81 +117,32 @@ public final class Perceptron {
         return output;
     }
 
-    public double[] think (double[][] inputs) {
-        double[] outputs = new double[inputs.length];
+    private void correctPerceptron () {
+        double error = tOutput - output;
 
-        if (weights != null) {
-            for (int f = 0; f < inputs.length; f++) {
+        double adjustment = error * sigmoidDerivative(output);
 
-                // Send Data to interface
-                currentInputs = inputs[f];
-                if (iPer != null) {
-                    iPer.setState(this, true);
-                    iPer.updatePerceptron(this, true);
-                }
-
-                for (int c = 0; c < inputs[0].length; c++) {
-                    outputs[f] += inputs[f][c] * weights[c];
-                }
-                outputs[f] += 1 * biasWeight;
-                outputs[f] = sigmoid(outputs[f]); // sigmoid(x1 * w1 + x2 * w2 + x3 * w3 + 1 * biasWeight)
-
-                // Send Data to interface
-                currentOutput = outputs[f];
-                if (iPer != null) {
-                    iPer.updatePerceptron(this, true);
-                    iPer.setState(this, false);
-                }
-            }
-        }
-
-        return outputs;
+        adjustWeights(adjustment);
+        adjustBiasWeights(adjustment);
     }
 
-    public double sigmoid (double x) {
-        // this is the sigmoid function "1 / (1 + exp(-x))", it normalizes the value received between 1 and -1
-        return 1 / (1 + Math.exp(-x));
-    }
-
-    public double sigmoidDerivative (double x) {
-        // Sigmoid derivative controls the learning rate
-        return x * (1 - x);
-    }
-
-    private void correctPerceptron (double[] lastOutputs) {
-        double[] adjustments = new double[lastOutputs.length];
-
-        for (int i = 0; i < lastOutputs.length; i++){
-            double error = outputs[i] - lastOutputs[i];
-
-            adjustments[i] = error * sigmoidDerivative(lastOutputs[i]);
-        }
-
-        adjustWeights(adjustments);
-        adjustBiasWeights(adjustments);
-    }
-
-    private void adjustWeights(double[] adjustments) {
-        for (int c = 0; c < inputs[0].length; c++) {
-            for (int f = 0; f < inputs.length; f++) {
-                weights[c] += inputs[f][c] * adjustments[f];
-            }
+    private void adjustWeights(double adjustment) {
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] += tInputs[i] * adjustment;
 
             if (iPer != null)
                 iPer.updatePerceptron(this, false);
         }
     }
 
-    private void adjustBiasWeights(double[] adjustments) {
-        for (int f = 0; f < adjustments.length; f++) {
-            biasWeight += 1 * adjustments[f];
-        }
+    private void adjustBiasWeights(double adjustment) {
+            biasWeight += adjustment;
     }
 
     private void setRandomWeights () {
         // setRandomWeights generates n random numbers for the weights
         Random rand = new Random();
-        double[] randomWeights = new double[inputs[0].length];
+        double[] randomWeights = new double[weights.length];
 
         for (int i = 0; i < randomWeights.length; i++) {
             randomWeights[i] = (2 * rand.nextDouble()) - 1;
@@ -236,4 +160,16 @@ public final class Perceptron {
 
         setBiasWeight(randomWeight);
     }
+
+
+    // STATIC METHODS
+    public static double sigmoid (double x) {
+        // this is the sigmoid function "1 / (1 + exp(-x))", it normalizes the value received between 1 and -1
+        return 1 / (1 + Math.exp(-x));
+    }
+
+    public static double sigmoidDerivative (double x) {
+        return x * (1 - x);
+    }
 }
+
