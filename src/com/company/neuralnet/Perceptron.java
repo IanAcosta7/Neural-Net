@@ -92,8 +92,6 @@ public class Perceptron {
     }
 
     public double think (double[] inputs) {
-        output = 0;
-
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
             iPer.setState(this, true);
