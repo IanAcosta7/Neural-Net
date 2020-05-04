@@ -9,11 +9,20 @@ public class NeuralNet {
     private ArrayList<ArrayList<SmartPerceptron>> layers;
     private int iterations;
 
+    private double[] netTInputs;
+    private double[] netTOutputs;
+    private double[] outputs;
+
 
     // CONSTRUCTOR
     public NeuralNet (int[] layers) {
         this.layers = new ArrayList<>();
         this.iterations = 0;
+
+        netTInputs = null;
+        netTOutputs = null;
+        outputs = null;
+
         initLayers(layers);
     }
 
@@ -28,29 +37,45 @@ public class NeuralNet {
     }
 
     public void setInputs (double[] inputs) {
+        this.netTInputs = inputs;
+
         for (SmartPerceptron perceptron : layers.get(0)) { // FOREACH FIRST LAYER PERCEPTRON
-            double[][] newInputs = new double[1][0];
+            double[] newInputs = new double[0];
             for (int i = 0; i < inputs.length;i++) {
                 for (String inputName : perceptron.getInputNodes()) { // FOREACH INPUT NODE
                     if (inputName.equals(Integer.toString(i))) {
-                        double[][] auxInputs = new double[1][newInputs[0].length + 1];
-                        for (int j = 0; j < newInputs[0].length; j++) {
-                            auxInputs[0][j] = newInputs[0][j];
+                        double[] auxInputs = new double[newInputs.length + 1];
+                        for (int j = 0; j < newInputs.length; j++) {
+                            auxInputs[j] = newInputs[j];
                         }
-                        auxInputs[0][newInputs[0].length] = inputs[i];
+                        auxInputs[newInputs.length] = inputs[i];
                         newInputs = auxInputs;
                     }
                 }
             }
-            perceptron.setInputs(newInputs);
+            perceptron.setTInputs(newInputs);
         }
     }
 
-    public void setOutputs (double[] outputs) {
-        int d = 0;
+    public void setOutputs (double[] newOutputs) {
+        this.netTOutputs = newOutputs;
+
+        // FOREACH OUTPUT
+        for (int i = 0; i < newOutputs.length; i++) {
+            // FOREACH LAST LAYER PERCEPTRON
+            for (SmartPerceptron perceptron : layers.get(layers.size() - 1)) {
+                // FOREACH OUTPUT NODE
+                for (String outputName : perceptron.getOutputNodes()) {
+                    if (outputName.equals(Integer.toString(i)))
+                        perceptron.setTOutput(newOutputs[i]);
+                }
+            }
+        }
+
+        /*int d = 0;
         for (SmartPerceptron perceptron : layers.get(layers.size() - 1)) { // FOREACH LAST LAYER PERCEPTRON
             double[][] newOutputs = new double[1][0];
-            for (String outputName : perceptron.getOutputNodes()) { // FOREACH OUTPUT NODE
+            for (String outputName : perceptron.getOutputNodes()) {
                 if (outputName.equals(Integer.toString(d))) {
                     double[][] auxOutputs = new double[1][newOutputs[0].length + 1];
                     for (int j = 0; j < newOutputs[0].length; j++) {
@@ -62,24 +87,10 @@ public class NeuralNet {
                 }
             }
             perceptron.setOutputs(newOutputs[0]);
-        }
+        }*/
     }
 
     // METHODS
-    public void train (double[][] inputs, double[][] outputs) {
-        Random rand = new Random();
-
-        if (inputs.length == outputs.length) {
-            for (int i = 0; i < iterations; i++) {
-                //Train a random set of inputs
-                int number = rand.nextInt(inputs.length);
-
-                practice(inputs[number], outputs[number]);
-            }
-        }
-    }
-
-    // TODO METHODS TO REFACTOR:
     private void initLayers (int[] layers) {
         for (int i = 0; i < layers.length; i++) {
             this.layers.add(new ArrayList<>());
@@ -87,10 +98,151 @@ public class NeuralNet {
                 StringBuilder strBuilder = new StringBuilder();
                 strBuilder.append(i);
                 strBuilder.append(j);
-                this.layers.get(i).add(new SmartPerceptron(strBuilder.toString()));
+                this.layers.get(i).add(new SmartPerceptron(strBuilder.toString(), 0.5));
             }
         }
     }
+
+    public void train (double[][] newInputs, double[][] newOutputs) {
+        Random rand = new Random();
+
+        if (newInputs.length == newOutputs.length) {
+            for (int i = 0; i < iterations; i++) {
+                //Train a random set of inputs
+                int number = rand.nextInt(newInputs.length);
+                setInputs(newInputs[number]);
+                setOutputs(newOutputs[number]);
+
+                outputs = think();
+
+                // CALCULATE ERROR
+                double totalError = 0;
+                for (int j = 0; j < layers.get(layers.size() - 1).size(); j++) {
+                    SmartPerceptron lastLayerPerceptron = layers.get(layers.size() - 1).get(j);
+
+                    double error = -(lastLayerPerceptron.getTOutput() - outputs[j]);
+                    totalError += error;
+
+                    lastLayerPerceptron.setPartialError(error);
+                }
+
+                backpropagate();
+            }
+        }
+    }
+
+    /*private void practice (double[] tInputs, double[] tOutputs) {
+        double[] outputs = think(tInputs);
+
+        setOutputs(tOutputs);
+
+        correct(outputs);
+    }*/
+
+    public double[] think () {
+        // FOREACH LAYER
+        for (int i = 0; i < layers.size(); i++) {
+            outputs = new double[layers.get(i).size()];
+            // FOREACH PERCEPTRON
+            for (int j = 0; j < layers.get(i).size(); j++) {
+                outputs[j] = layers.get(i).get(j).think();
+
+                for (String outputName : layers.get(i).get(j).getOutputNodes()) {
+                    SmartPerceptron outputNode = getPerceptron(outputName);
+
+                    if (outputNode != null) {
+                        double[] auxInputs = new double[outputNode.getInputNodes().size()];
+
+                        //TODO CHANGE
+                        if (outputNode.getTInputs() == null) {
+                            auxInputs[0] = outputs[j];
+                        } else {
+                            for (int l = 0; l < outputNode.getTInputs().length - 1; l++) {
+                                auxInputs[l] = outputNode.getTInputs()[l];
+                            }
+                            auxInputs[outputNode.getTInputs().length - 1] = outputs[j];
+                        }
+
+                        outputNode.setTInputs(auxInputs);
+                    }
+                }
+            }
+        }
+
+        /*
+        // THINKING PROCESS
+        for (int i = 0; i < layers.size(); i++) {
+            outputs = new double[layers.get(i).size()];
+            for (int j = 0; j < layers.get(i).size(); j++) {
+                // Get layer outputs
+                outputs[j] = layers.get(i).get(j).think();
+                // Set next layer inputs
+                for (int k = 0; k < layers.get(i).get(j).getOutputNodes().size(); k++) {
+                    SmartPerceptron outputNode = getPerceptron(layers.get(i).get(j).getOutputNodes().get(k));
+
+                    if (outputNode != null)
+                        outputNode.setTInputs(outputs);
+                }
+            }
+        }
+        */
+
+        return outputs;
+    }
+
+    public double[] think (double[] newInputs) {
+        setInputs(newInputs);
+        // FOREACH LAYER
+        for (int i = 0; i < layers.size(); i++) {
+            outputs = new double[layers.get(i).size()];
+            // FOREACH PERCEPTRON
+            for (int j = 0; j < layers.get(i).size(); j++) {
+                outputs[j] = layers.get(i).get(j).think();
+
+                for (String outputName : layers.get(i).get(j).getOutputNodes()) {
+                    SmartPerceptron outputNode = getPerceptron(outputName);
+
+                    if (outputNode != null) {
+                        double[] auxInputs = new double[outputNode.getInputNodes().size()];
+
+                        //TODO CHANGE
+                        if (outputNode.getTInputs() == null) {
+                            auxInputs[0] = outputs[j];
+                        } else {
+                            for (int l = 0; l < outputNode.getTInputs().length - 1; l++) {
+                                auxInputs[l] = outputNode.getTInputs()[l];
+                            }
+                            auxInputs[outputNode.getTInputs().length - 1] = outputs[j];
+                        }
+
+                        outputNode.setTInputs(auxInputs);
+                    }
+                }
+            }
+        }
+        return outputs;
+    }
+
+    public double[][] think (double[][] newInputs) {
+        double[][] finalOutputs = new double[newInputs.length][layers.get(layers.size() -1).size()];
+
+        for (int i = 0; i < newInputs.length; i++) {
+            finalOutputs[i] = think(newInputs[i]);
+        }
+
+        return finalOutputs;
+    }
+
+    /*public double[][] think (double[][] tInputs) {
+        double[][] outputs = new double[tInputs.length][tInputs[0].length];
+
+        for (int i = 0; i < tInputs.length; i++) {
+            outputs[i] = think(tInputs[i]);
+        }
+
+        return outputs;
+    }*/
+
 
     public void connect (String giver, String taker) {
         if (getPerceptron(giver) != null)
@@ -112,63 +264,14 @@ public class NeuralNet {
         return result;
     }
 
-    private void practice (double[] tInputs, double[] tOutputs) {
-        double[] outputs = think(tInputs);
-
-        setOutputs(tOutputs);
-
-        correct(outputs);
-    }
-
-    public double[][] think (double[][] tInputs) {
-        double[][] outputs = new double[tInputs.length][tInputs[0].length];
-
-        for (int i = 0; i < tInputs.length; i++) {
-            outputs[i] = think(tInputs[i]);
-        }
-
-        return outputs;
-    }
-
-    public double[] think (double[] tInputs) {
-        double[] outputs = null;
-
-        setInputs(tInputs);
-
-        // THINKING PROCESS
-        for (int i = 0; i < layers.size(); i++) {
-            outputs = new double[layers.get(i).size()];
-            for (int j = 0; j < layers.get(i).size(); j++) {
-                // Get layer outputs
-                outputs[j] = layers.get(i).get(j).think();
-                // Set next layer inputs
-                for (int k = 0; k < layers.get(i).get(j).getOutputNodes().size(); k++) {
-                    SmartPerceptron outputNode = getPerceptron(layers.get(i).get(j).getOutputNodes().get(k));
-
-                    if (outputNode != null)
-                        outputNode.setInputs(new double[][]{outputs});
-                }
-            }
-        }
-
-        return outputs;
-    }
-
-    private void correct (double[] outputs) {
-        // CORRECT LAST LAYER
-        for (int i = 0; i < layers.get(layers.size() - 1).size(); i++) {
-            SmartPerceptron lastLayerPerceptron = layers.get(layers.size() - 1).get(i);
-
-            double totalError = -(lastLayerPerceptron.getOutputs()[0] - outputs[i]);
-
-            lastLayerPerceptron.setPartialError(totalError);
-        }
-
+    private void backpropagate () {
         // BACKPROPAGATE
         for (int i = layers.size() - 2; i >= 0; i--) {
-            // CALCULATE ERROR
+            // FOREACH PERCEPTRON
             for (int j = 0; j < layers.get(i).size(); j++) {
                 SmartPerceptron perceptron = layers.get(i).get(j);
+
+                // Calculates partial error
                 double partialError = 0;
 
                 // Foreach perceptron in the next layer
@@ -177,7 +280,7 @@ public class NeuralNet {
 
                     double nextLayerError = nextLayerPerceptron.getPartialError();
 
-                    partialError += nextLayerError * Perceptron.sigmoidDerivative(nextLayerPerceptron.getCurrentOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+                    partialError += nextLayerError * Perceptron.sigmoidDerivative(nextLayerPerceptron.getOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
                 }
 
                 perceptron.setPartialError(partialError);

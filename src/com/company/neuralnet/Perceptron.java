@@ -5,32 +5,32 @@ import java.util.Random;
 public class Perceptron {
 
     // ATTRIBUTES
-    private double[] tInputs;
-    private double tOutput;
-    private double output;
-    private double[] weights;
-    private double biasWeight;
-    private double lr;
+    protected double[] tInputs;
+    protected double tOutput;
+    protected double output;
+    protected double[] weights;
+    protected double biasWeight;
+    protected double lr;
 
     // DEBUGGING OPTIONAL ATTRIBUTE
     private IPerceptron iPer;
 
 
-    public Perceptron(int inputs, double lr) {
-        this.tInputs = new double[inputs];
+    public Perceptron(double lr) {
+        this.tInputs = null;
         this.tOutput = 0;
         this.output = Double.NaN;
-        this.weights = new double[inputs];
+        this.weights = null;
         this.lr = lr;
         this.biasWeight = 0;
         this.iPer = null;
     }
 
-    public Perceptron(int inputs, double lr, IPerceptron iPer) {
-        this.tInputs = new double[inputs];
+    public Perceptron(double lr, IPerceptron iPer) {
+        this.tInputs = null;
         this.tOutput = 0;
         this.output = Double.NaN;
-        this.weights = new double[inputs];
+        this.weights = null;
         this.lr = lr;
         this.biasWeight = 0;
         this.iPer = iPer;
@@ -70,6 +70,18 @@ public class Perceptron {
 
     public void setBiasWeight(double biasWeight) {
         this.biasWeight = biasWeight;
+    }
+
+    public void setTInputs(double[] tInputs) {
+        this.tInputs = tInputs;
+        if (weights == null) {
+            setRandomWeights();
+            setRandomBiasWeights();
+        }
+    }
+
+    public void setTOutput(double tOutput) {
+        this.tOutput = tOutput;
     }
 
     public void setLr(double lr) {
@@ -115,6 +127,30 @@ public class Perceptron {
         return output;
     }
 
+    public double think () {
+        if (iPer != null) {
+            iPer.updatePerceptron(this, true);
+            iPer.setState(this, true);
+        }
+
+        // ---------- PROCESS INPUTS ---------- //
+        double z = 0;
+        for (int i = 0; i < tInputs.length; i++) {
+            z += tInputs[i] * weights[i];
+        }
+        z += biasWeight;
+
+        output = sigmoid(z); // sigmoid(x1 * w1 + x2 * w2 + x3 * w3 + 1 * biasWeight)
+        // ----------------------------------- //
+
+        if (iPer != null) {
+            iPer.updatePerceptron(this, true);
+            iPer.setState(this, false);
+        }
+
+        return output;
+    }
+
     private void correctPerceptron () {
         double error = tOutput - output;
 
@@ -124,7 +160,7 @@ public class Perceptron {
         adjustBiasWeights(adjustment);
     }
 
-    private void adjustWeights(double adjustment) {
+    protected void adjustWeights(double adjustment) {
         for (int i = 0; i < weights.length; i++) {
             weights[i] += tInputs[i] * adjustment;
 
@@ -133,14 +169,14 @@ public class Perceptron {
         }
     }
 
-    private void adjustBiasWeights(double adjustment) {
+    protected void adjustBiasWeights(double adjustment) {
         biasWeight += adjustment;
     }
 
     private void setRandomWeights () {
         // setRandomWeights generates n random numbers for the weights
         Random rand = new Random();
-        double[] randomWeights = new double[weights.length];
+        double[] randomWeights = new double[tInputs.length];
 
         for (int i = 0; i < randomWeights.length; i++) {
             randomWeights[i] = (2 * rand.nextDouble()) - 1;

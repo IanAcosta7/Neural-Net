@@ -2,7 +2,7 @@ package com.company.neuralnet;
 
 import java.util.ArrayList;
 
-public class SmartPerceptron extends NetPerceptron {
+public class SmartPerceptron extends Perceptron {
 
     // ATTRIBUTES
     private String name;
@@ -12,7 +12,8 @@ public class SmartPerceptron extends NetPerceptron {
 
 
     // CONSTRUCTOR
-    public SmartPerceptron(String name) {
+    public SmartPerceptron(String name, double lr) {
+        super(lr);
         this.name = name;
         this.inputNodes = new ArrayList<>();
         this.outputNodes = new ArrayList<>();
@@ -48,7 +49,21 @@ public class SmartPerceptron extends NetPerceptron {
         this.partialError = partialError;
     }
 
-// METHODS
+    // METHODS
 
 
+
+    // OVERRIDES
+    @Override
+    public void adjustWeights(double error) {
+        for (int c = 0; c < tInputs.length; c++) {
+            double realAdjustment = lr * tInputs[c] * error * sigmoidDerivative(output);
+            weights[c] -= realAdjustment;
+        }
+    }
+
+    @Override
+    public void adjustBiasWeights(double error) {
+        biasWeight -= lr * error * sigmoidDerivative(output);
+    }
 }
