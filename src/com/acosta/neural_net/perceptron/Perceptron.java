@@ -16,6 +16,7 @@ public class Perceptron {
     private IPerceptron iPer;
 
 
+    // CONSTRUCTOR
     public Perceptron(double lr) {
         this.tInputs = null;
         this.tOutput = 0;
@@ -205,5 +206,6 @@ public class Perceptron {
     public static double sigmoidDerivative (double x) {
         return x * (1 - x);
     }
+
 }
 

@@ -1,10 +1,8 @@
 package com.acosta.neural_net.perceptron;
 
-import com.acosta.neural_net.perceptron.Perceptron;
-
 import java.util.ArrayList;
 
-public class SmartPerceptron extends Perceptron {
+public class Node extends Perceptron {
 
     // ATTRIBUTES
     private String name;
@@ -14,12 +12,13 @@ public class SmartPerceptron extends Perceptron {
 
 
     // CONSTRUCTOR
-    public SmartPerceptron(String name, double lr) {
+    public Node(String name, double lr) {
         super(lr);
         this.name = name;
         this.inputNodes = new ArrayList<>();
         this.outputNodes = new ArrayList<>();
     }
+
 
     // GETTERS
     public String getName() {
@@ -38,6 +37,7 @@ public class SmartPerceptron extends Perceptron {
         return partialError;
     }
 
+
     // SETTERS
     public void setInputNode (String name) {
         this.inputNodes.add(name);
@@ -50,9 +50,6 @@ public class SmartPerceptron extends Perceptron {
     public void setPartialError(double partialError) {
         this.partialError = partialError;
     }
-
-    // METHODS
-
 
 
     // OVERRIDES
