@@ -110,6 +110,7 @@ public class NeuralNet {
             for (int i = 0; i < iterations; i++) {
                 //Train a random set of inputs
                 int number = rand.nextInt(newInputs.length);
+
                 setInputs(newInputs[number]);
                 setOutputs(newOutputs[number]);
 
@@ -151,17 +152,14 @@ public class NeuralNet {
                     SmartPerceptron outputNode = getPerceptron(outputName);
 
                     if (outputNode != null) {
-                        double[] auxInputs = new double[outputNode.getInputNodes().size()];
+                        double[] auxInputs;
 
-                        //TODO CHANGE
-                        if (outputNode.getTInputs() == null) {
-                            auxInputs[0] = outputs[j];
-                        } else {
-                            for (int l = 0; l < outputNode.getTInputs().length - 1; l++) {
-                                auxInputs[l] = outputNode.getTInputs()[l];
-                            }
-                            auxInputs[outputNode.getTInputs().length - 1] = outputs[j];
-                        }
+                        if (outputNode.getTInputs() == null)
+                            auxInputs = new double[outputNode.getInputNodes().size()];
+                        else
+                            auxInputs = outputNode.getTInputs();
+
+                        auxInputs[outputNode.getInputNodes().indexOf(layers.get(i).get(j).getName())] = outputs[j];
 
                         outputNode.setTInputs(auxInputs);
                     }
@@ -203,17 +201,14 @@ public class NeuralNet {
                     SmartPerceptron outputNode = getPerceptron(outputName);
 
                     if (outputNode != null) {
-                        double[] auxInputs = new double[outputNode.getInputNodes().size()];
+                        double[] auxInputs;
 
-                        //TODO CHANGE
-                        if (outputNode.getTInputs() == null) {
-                            auxInputs[0] = outputs[j];
-                        } else {
-                            for (int l = 0; l < outputNode.getTInputs().length - 1; l++) {
-                                auxInputs[l] = outputNode.getTInputs()[l];
-                            }
-                            auxInputs[outputNode.getTInputs().length - 1] = outputs[j];
-                        }
+                        if (outputNode.getTInputs() == null)
+                            auxInputs = new double[outputNode.getInputNodes().size()];
+                        else
+                            auxInputs = outputNode.getTInputs();
+
+                        auxInputs[outputNode.getInputNodes().indexOf(layers.get(i).get(j).getName())] = outputs[j];
 
                         outputNode.setTInputs(auxInputs);
                     }
