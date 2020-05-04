@@ -1,4 +1,7 @@
-package com.company.neuralnet;
+package com.acosta.neural_net;
+
+import com.acosta.neural_net.perceptron.Perceptron;
+import com.acosta.neural_net.perceptron.SmartPerceptron;
 
 import java.util.ArrayList;
 import java.util.Random;

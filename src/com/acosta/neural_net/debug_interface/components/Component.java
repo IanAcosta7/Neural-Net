@@ -1,4 +1,4 @@
-package com.company.neuralnet.components;
+package com.acosta.neural_net.debug_interface.components;
 
 public abstract class Component {
     // ATTRIBUTES

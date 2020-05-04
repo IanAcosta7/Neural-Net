@@ -1,6 +1,6 @@
-package com.company.neuralnet.components;
+package com.acosta.neural_net.debug_interface.components;
 
-import com.company.neuralnet.Perceptron;
+import com.acosta.neural_net.perceptron.Perceptron;
 
 import java.awt.*;
 import java.text.DecimalFormat;

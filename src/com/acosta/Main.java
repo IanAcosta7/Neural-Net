@@ -1,9 +1,9 @@
-package com.company;
+package com.acosta;
 
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
-import com.company.neuralnet.*;
+import com.acosta.neural_net.*;
 
 public class Main {
 

@@ -1,4 +1,4 @@
-package com.company.neuralnet;
+package com.acosta.neural_net.perceptron;
 
 import java.util.Random;
 

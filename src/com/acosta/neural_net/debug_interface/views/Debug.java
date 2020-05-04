@@ -1,8 +1,8 @@
-package com.company.neuralnet.views;
+package com.acosta.neural_net.debug_interface.views;
 
-import com.company.neuralnet.IPerceptron;
-import com.company.neuralnet.Perceptron;
-import com.company.neuralnet.components.*;
+import com.acosta.neural_net.perceptron.IPerceptron;
+import com.acosta.neural_net.perceptron.Perceptron;
+import com.acosta.neural_net.debug_interface.components.*;
 
 import java.awt.*;
 import java.util.ArrayList;

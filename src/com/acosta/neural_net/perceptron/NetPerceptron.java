@@ -1,6 +1,4 @@
-package com.company.neuralnet;
-
-import java.util.Random;
+package com.acosta.neural_net.perceptron;
 
 public class NetPerceptron {
 
