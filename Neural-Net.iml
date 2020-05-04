@@ -7,6 +7,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="org.ejml:ejml-simple:0.32" level="project" />
   </component>
 </module>
