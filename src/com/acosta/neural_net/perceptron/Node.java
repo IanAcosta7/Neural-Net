@@ -57,12 +57,12 @@ public class Node extends Perceptron {
     public void adjustWeights(double error) {
         for (int c = 0; c < tInputs.length; c++) {
             double realAdjustment = lr * tInputs[c] * error * sigmoidDerivative(output);
-            weights[c] -= realAdjustment;
+            weights[c] += realAdjustment;
         }
     }
 
     @Override
     public void adjustBiasWeights(double error) {
-        biasWeight -= lr * error * sigmoidDerivative(output);
+        biasWeight += lr * error * sigmoidDerivative(output);
     }
 }

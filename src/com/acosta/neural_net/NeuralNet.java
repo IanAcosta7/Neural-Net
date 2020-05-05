@@ -110,7 +110,7 @@ public class NeuralNet {
                 for (int j = 0; j < layers.get(layers.size() - 1).size(); j++) {
                     Node lastLayerPerceptron = layers.get(layers.size() - 1).get(j);
 
-                    double error = -(lastLayerPerceptron.getTOutput() - outputs[j]);
+                    double error = lastLayerPerceptron.getTOutput() - outputs[j];
                     totalError += error;
 
                     lastLayerPerceptron.setPartialError(error);
