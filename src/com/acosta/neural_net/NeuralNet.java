@@ -16,6 +16,8 @@ public class NeuralNet {
     private double[] netTOutputs;
     private double[] outputs;
 
+    private double cost;
+
 
     // CONSTRUCTOR
     public NeuralNet (int[] layers) {
@@ -26,6 +28,8 @@ public class NeuralNet {
         netTOutputs = null;
         outputs = null;
 
+        cost = 0;
+
         initLayers(layers);
     }
 
@@ -35,6 +39,9 @@ public class NeuralNet {
         return iterations;
     }
 
+    public double getCost() {
+        return cost;
+    }
 
     // SETTERS
     public void setIterations(int iterations) {
@@ -105,13 +112,13 @@ public class NeuralNet {
 
                 outputs = think();
 
-                // CALCULATE ERROR
-                double totalError = 0;
+                // CALCULATE COST
+                cost = 0;
                 for (int j = 0; j < layers.get(layers.size() - 1).size(); j++) {
                     Node lastLayerPerceptron = layers.get(layers.size() - 1).get(j);
 
                     double error = lastLayerPerceptron.getTOutput() - outputs[j];
-                    totalError += error;
+                    cost += Math.pow(error, 2); // sum(aj - tj)^2
 
                     lastLayerPerceptron.setPartialError(error);
                 }
