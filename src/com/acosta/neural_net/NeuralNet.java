@@ -57,9 +57,9 @@ public class NeuralNet {
                 for (String inputName : perceptron.getInputNodes()) { // FOREACH INPUT NODE
                     if (inputName.equals(Integer.toString(i))) {
                         double[] auxInputs = new double[newInputs.length + 1];
-                        for (int j = 0; j < newInputs.length; j++) {
-                            auxInputs[j] = newInputs[j];
-                        }
+
+                        System.arraycopy(newInputs, 0, auxInputs, 0, newInputs.length);
+
                         auxInputs[newInputs.length] = inputs[i];
                         newInputs = auxInputs;
                     }
@@ -130,13 +130,13 @@ public class NeuralNet {
 
     public double[] think () {
         // FOREACH LAYER
-        for (int i = 0; i < layers.size(); i++) {
-            outputs = new double[layers.get(i).size()];
+        for (ArrayList<Node> layer : layers) {
+            outputs = new double[layer.size()];
             // FOREACH PERCEPTRON
-            for (int j = 0; j < layers.get(i).size(); j++) {
-                outputs[j] = layers.get(i).get(j).think();
+            for (int i = 0; i < layer.size(); i++) {
+                outputs[i] = layer.get(i).think();
 
-                for (String outputName : layers.get(i).get(j).getOutputNodes()) {
+                for (String outputName : layer.get(i).getOutputNodes()) {
                     Node outputNode = getNode(outputName);
 
                     if (outputNode != null) {
@@ -147,7 +147,7 @@ public class NeuralNet {
                         else
                             auxInputs = outputNode.getTInputs();
 
-                        auxInputs[outputNode.getInputNodes().indexOf(layers.get(i).get(j).getName())] = outputs[j];
+                        auxInputs[outputNode.getInputNodes().indexOf(layer.get(i).getName())] = outputs[i];
 
                         outputNode.setTInputs(auxInputs);
                     }
@@ -161,13 +161,13 @@ public class NeuralNet {
     public double[] think (double[] newInputs) {
         setInputs(newInputs);
         // FOREACH LAYER
-        for (int i = 0; i < layers.size(); i++) {
-            outputs = new double[layers.get(i).size()];
+        for (ArrayList<Node> layer : layers) {
+            outputs = new double[layer.size()];
             // FOREACH PERCEPTRON
-            for (int j = 0; j < layers.get(i).size(); j++) {
-                outputs[j] = layers.get(i).get(j).think();
+            for (int i = 0; i < layer.size(); i++) {
+                outputs[i] = layer.get(i).think();
 
-                for (String outputName : layers.get(i).get(j).getOutputNodes()) {
+                for (String outputName : layer.get(i).getOutputNodes()) {
                     Node outputNode = getNode(outputName);
 
                     if (outputNode != null) {
@@ -178,7 +178,7 @@ public class NeuralNet {
                         else
                             auxInputs = outputNode.getTInputs();
 
-                        auxInputs[outputNode.getInputNodes().indexOf(layers.get(i).get(j).getName())] = outputs[j];
+                        auxInputs[outputNode.getInputNodes().indexOf(layer.get(i).getName())] = outputs[i];
 
                         outputNode.setTInputs(auxInputs);
                     }
