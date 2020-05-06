@@ -5,32 +5,32 @@ import java.util.ArrayList;
 public class Node extends Perceptron {
 
     // ATTRIBUTES
-    private String name;
-    private ArrayList<String> inputNodes;
-    private ArrayList<String> outputNodes;
+    private final String NAME;
+    private final ArrayList<String> INPUT_NODES;
+    private final ArrayList<String> OUTPUT_NODES;
     private double partialError;
 
 
     // CONSTRUCTOR
-    public Node(String name, double lr) {
+    public Node(String NAME, double lr) {
         super(lr);
-        this.name = name;
-        this.inputNodes = new ArrayList<>();
-        this.outputNodes = new ArrayList<>();
+        this.NAME = NAME;
+        this.INPUT_NODES = new ArrayList<>();
+        this.OUTPUT_NODES = new ArrayList<>();
     }
 
 
     // GETTERS
-    public String getName() {
-        return name;
+    public String getNAME() {
+        return NAME;
     }
 
-    public ArrayList<String> getInputNodes () {
-        return inputNodes;
+    public ArrayList<String> getINPUT_NODES() {
+        return INPUT_NODES;
     }
 
-    public ArrayList<String> getOutputNodes () {
-        return outputNodes;
+    public ArrayList<String> getOUTPUT_NODES() {
+        return OUTPUT_NODES;
     }
 
     public double getPartialError() {
@@ -40,11 +40,11 @@ public class Node extends Perceptron {
 
     // SETTERS
     public void setInputNode (String name) {
-        this.inputNodes.add(name);
+        this.INPUT_NODES.add(name);
     }
 
     public void setOutputNode (String name) {
-        this.outputNodes.add(name);
+        this.OUTPUT_NODES.add(name);
     }
 
     public void setPartialError(double partialError) {

@@ -9,7 +9,7 @@ import java.util.Random;
 public class NeuralNet {
 
     // ATTRIBUTES
-    private ArrayList<ArrayList<Node>> layers;
+    private final ArrayList<ArrayList<Node>> LAYERS;
     private int iterations;
 
     private double[] netTInputs;
@@ -21,7 +21,7 @@ public class NeuralNet {
 
     // CONSTRUCTOR
     public NeuralNet (int[] layers) {
-        this.layers = new ArrayList<>();
+        this.LAYERS = new ArrayList<>();
         this.iterations = 0;
 
         netTInputs = null;
@@ -51,10 +51,10 @@ public class NeuralNet {
     public void setInputs (double[] inputs) {
         this.netTInputs = inputs;
 
-        for (Node perceptron : layers.get(0)) { // FOREACH FIRST LAYER PERCEPTRON
+        for (Node perceptron : LAYERS.get(0)) { // FOREACH FIRST LAYER PERCEPTRON
             double[] newInputs = new double[0];
             for (int i = 0; i < inputs.length;i++) {
-                for (String inputName : perceptron.getInputNodes()) { // FOREACH INPUT NODE
+                for (String inputName : perceptron.getINPUT_NODES()) { // FOREACH INPUT NODE
                     if (inputName.equals(Integer.toString(i))) {
                         double[] auxInputs = new double[newInputs.length + 1];
 
@@ -75,9 +75,9 @@ public class NeuralNet {
         // FOREACH OUTPUT
         for (int i = 0; i < newOutputs.length; i++) {
             // FOREACH LAST LAYER PERCEPTRON
-            for (Node perceptron : layers.get(layers.size() - 1)) {
+            for (Node perceptron : LAYERS.get(LAYERS.size() - 1)) {
                 // FOREACH OUTPUT NODE
-                for (String outputName : perceptron.getOutputNodes()) {
+                for (String outputName : perceptron.getOUTPUT_NODES()) {
                     if (outputName.equals(Integer.toString(i)))
                         perceptron.setTOutput(newOutputs[i]);
                 }
@@ -89,12 +89,12 @@ public class NeuralNet {
     // METHODS
     private void initLayers (int[] layers) {
         for (int i = 0; i < layers.length; i++) {
-            this.layers.add(new ArrayList<>());
+            this.LAYERS.add(new ArrayList<>());
             for (int j = 0; j < layers[i]; j++) {
                 StringBuilder strBuilder = new StringBuilder();
                 strBuilder.append(i);
                 strBuilder.append(j);
-                this.layers.get(i).add(new Node(strBuilder.toString(), 0.5));
+                this.LAYERS.get(i).add(new Node(strBuilder.toString(), 0.5));
             }
         }
     }
@@ -114,8 +114,8 @@ public class NeuralNet {
 
                 // CALCULATE COST
                 cost = 0;
-                for (int j = 0; j < layers.get(layers.size() - 1).size(); j++) {
-                    Node lastLayerPerceptron = layers.get(layers.size() - 1).get(j);
+                for (int j = 0; j < LAYERS.get(LAYERS.size() - 1).size(); j++) {
+                    Node lastLayerPerceptron = LAYERS.get(LAYERS.size() - 1).get(j);
 
                     double error = lastLayerPerceptron.getTOutput() - outputs[j];
                     cost += Math.pow(error, 2); // sum(aj - tj)^2
@@ -130,24 +130,24 @@ public class NeuralNet {
 
     public double[] think () {
         // FOREACH LAYER
-        for (ArrayList<Node> layer : layers) {
+        for (ArrayList<Node> layer : LAYERS) {
             outputs = new double[layer.size()];
             // FOREACH PERCEPTRON
             for (int i = 0; i < layer.size(); i++) {
                 outputs[i] = layer.get(i).think();
 
-                for (String outputName : layer.get(i).getOutputNodes()) {
+                for (String outputName : layer.get(i).getOUTPUT_NODES()) {
                     Node outputNode = getNode(outputName);
 
                     if (outputNode != null) {
                         double[] auxInputs;
 
                         if (outputNode.getTInputs() == null)
-                            auxInputs = new double[outputNode.getInputNodes().size()];
+                            auxInputs = new double[outputNode.getINPUT_NODES().size()];
                         else
                             auxInputs = outputNode.getTInputs();
 
-                        auxInputs[outputNode.getInputNodes().indexOf(layer.get(i).getName())] = outputs[i];
+                        auxInputs[outputNode.getINPUT_NODES().indexOf(layer.get(i).getNAME())] = outputs[i];
 
                         outputNode.setTInputs(auxInputs);
                     }
@@ -161,24 +161,24 @@ public class NeuralNet {
     public double[] think (double[] newInputs) {
         setInputs(newInputs);
         // FOREACH LAYER
-        for (ArrayList<Node> layer : layers) {
+        for (ArrayList<Node> layer : LAYERS) {
             outputs = new double[layer.size()];
             // FOREACH PERCEPTRON
             for (int i = 0; i < layer.size(); i++) {
                 outputs[i] = layer.get(i).think();
 
-                for (String outputName : layer.get(i).getOutputNodes()) {
+                for (String outputName : layer.get(i).getOUTPUT_NODES()) {
                     Node outputNode = getNode(outputName);
 
                     if (outputNode != null) {
                         double[] auxInputs;
 
                         if (outputNode.getTInputs() == null)
-                            auxInputs = new double[outputNode.getInputNodes().size()];
+                            auxInputs = new double[outputNode.getINPUT_NODES().size()];
                         else
                             auxInputs = outputNode.getTInputs();
 
-                        auxInputs[outputNode.getInputNodes().indexOf(layer.get(i).getName())] = outputs[i];
+                        auxInputs[outputNode.getINPUT_NODES().indexOf(layer.get(i).getNAME())] = outputs[i];
 
                         outputNode.setTInputs(auxInputs);
                     }
@@ -189,7 +189,7 @@ public class NeuralNet {
     }
 
     public double[][] think (double[][] newInputs) {
-        double[][] finalOutputs = new double[newInputs.length][layers.get(layers.size() -1).size()];
+        double[][] finalOutputs = new double[newInputs.length][LAYERS.get(LAYERS.size() -1).size()];
 
         for (int i = 0; i < newInputs.length; i++) {
             finalOutputs[i] = think(newInputs[i]);
@@ -208,9 +208,9 @@ public class NeuralNet {
     private Node getNode (String name) {
         Node result = null;
 
-        for (ArrayList<Node> layer : layers) {
+        for (ArrayList<Node> layer : LAYERS) {
             for (Node perceptron : layer) {
-                if (perceptron.getName().equals(name))
+                if (perceptron.getNAME().equals(name))
                     result = perceptron;
             }
         }
@@ -220,19 +220,19 @@ public class NeuralNet {
 
     private void backpropagate () {
         // FOREACH LAYER
-        for (int i = layers.size() - 2; i >= 0; i--) {
+        for (int i = LAYERS.size() - 2; i >= 0; i--) {
             // FOREACH PERCEPTRON
-            for (Node node : layers.get(i)) {
+            for (Node node : LAYERS.get(i)) {
                 // Calculates partial error
                 double partialError = 0;
 
                 // Foreach Output Node
-                for (String outputName : node.getOutputNodes()) {
+                for (String outputName : node.getOUTPUT_NODES()) {
                     Node outputNode = getNode(outputName);
 
                     partialError += outputNode.getPartialError()
                             * Perceptron.sigmoidDerivative(outputNode.getOutput())
-                            * outputNode.getWeights()[outputNode.getInputNodes().indexOf(node.getName())];
+                            * outputNode.getWeights()[outputNode.getINPUT_NODES().indexOf(node.getNAME())];
                 }
 
                 node.setPartialError(partialError);
@@ -242,7 +242,7 @@ public class NeuralNet {
     }
 
     private void adjustAll() {
-        for (ArrayList<Node> layer : layers) {
+        for (ArrayList<Node> layer : LAYERS) {
             for (Node perceptron : layer) {
                 perceptron.adjustWeights(perceptron.getPartialError());
                 perceptron.adjustBiasWeights(perceptron.getPartialError());
