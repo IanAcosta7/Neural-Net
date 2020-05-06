@@ -71,6 +71,22 @@ This is what we call **Machine learning**. The machine:
 - Adjusts itself.
 - And repeat...
 
+## How a Neural Network works?
+If we know how a Perceptron works, it's now too hard to understand how a **Neural Network** works. Because a Neural Network is just *a collection of connected nodes (Perceptrons)*.  
+The benefit of creating Neural Networks instead of simple Perceptrons is that with these, we can solve harder problems. For example, before we could teach the Perceptron to solve an AND or an OR gate, but if we tried to teach the Perceptron
+a more complex operation like XOR it wouldn't work.  
+As you can see in the next image, this is because a XOR gate requires two AND gates and one OR gate.
+
+![](README/and_xor.png)  
+
+This problem is too difficult for just one Perceptron.
+So we can solve this problem creating a Neural Network with three neurons, this way the net can train the first two as AND gates, and the third as an OR gate.  
+
+### Layers
+A Neural Network made up of various layers. Each layer also has a group of Perceptrons.
+The first layer is called the **Input Layer** because is the one that receives the inputs from the dataset. The last layer is called **Output Layer**, this is because is the layer that gives the final output. Every layer between these two are called **Hidden Layers** and are the ones responsible to generate the outputs.  
+![](README/nn.png)
+
 ## References
 - PolyCode - Create a simple NN: https://youtu.be/kft1AJ9WVDk && https://youtu.be/Py4xvZx-A1E
 - The Coding Train - Neural Network Playlist: https://www.youtube.com/playlist?list=PLRqwX-V7Uu6Y7MdSCaIfsxc561QI0U0Tb
