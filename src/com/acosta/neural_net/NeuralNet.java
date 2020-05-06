@@ -222,22 +222,20 @@ public class NeuralNet {
         // FOREACH LAYER
         for (int i = layers.size() - 2; i >= 0; i--) {
             // FOREACH PERCEPTRON
-            for (int j = 0; j < layers.get(i).size(); j++) {
-                Node perceptron = layers.get(i).get(j);
-
+            for (Node node : layers.get(i)) {
                 // Calculates partial error
                 double partialError = 0;
 
-                // Foreach perceptron in the next layer
-                for (int k = 0; k < layers.get(i + 1).size(); k++) {
-                    Node nextLayerPerceptron = layers.get(i + 1).get(k);
+                // Foreach Output Node
+                for (String outputName : node.getOutputNodes()) {
+                    Node outputNode = getNode(outputName);
 
-                    double nextLayerError = nextLayerPerceptron.getPartialError();
-
-                    partialError += nextLayerError * Perceptron.sigmoidDerivative(nextLayerPerceptron.getOutput()) * nextLayerPerceptron.getWeights()[nextLayerPerceptron.getInputNodes().indexOf(perceptron.getName())];
+                    partialError += outputNode.getPartialError()
+                            * Perceptron.sigmoidDerivative(outputNode.getOutput())
+                            * outputNode.getWeights()[outputNode.getInputNodes().indexOf(node.getName())];
                 }
 
-                perceptron.setPartialError(partialError);
+                node.setPartialError(partialError);
             }
         }
         adjustAll();
