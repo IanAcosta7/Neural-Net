@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.Scanner;
 
 import com.acosta.neural_net.*;
+import com.acosta.neural_net.debug_interface.views.Debug;
 
 public class Main {
 
@@ -28,8 +29,8 @@ public class Main {
                 {0}
         };
 
-
-        NeuralNet net = new NeuralNet(hiddenLayers);
+        Debug debug = new Debug(500);
+        NeuralNet net = new NeuralNet(hiddenLayers, debug);
 
         // Connections
         net.connect("0", "00");

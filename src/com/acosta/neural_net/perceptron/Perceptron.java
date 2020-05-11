@@ -13,7 +13,7 @@ public class Perceptron {
     protected double lr;
 
     // DEBUGGING OPTIONAL ATTRIBUTE
-    private IPerceptron iPer;
+    private INode iPer;
 
 
     // CONSTRUCTOR
@@ -27,7 +27,7 @@ public class Perceptron {
         this.iPer = null;
     }
 
-    public Perceptron(double lr, IPerceptron iPer) {
+    public Perceptron(double lr, INode iPer) {
         this.tInputs = null;
         this.tOutput = 0;
         this.output = Double.NaN;
@@ -89,7 +89,7 @@ public class Perceptron {
         this.lr = lr;
     }
 
-    public void setIPer(IPerceptron iPer) {
+    public void setIPer(INode iPer) {
         this.iPer = iPer;
     }
 
@@ -107,7 +107,7 @@ public class Perceptron {
     public double think (double[] inputs) {
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
-            iPer.setState(this, true);
+            //iPer.setState(this, true);
         }
 
         // ---------- PROCESS INPUTS ---------- //
@@ -122,7 +122,7 @@ public class Perceptron {
 
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
-            iPer.setState(this, false);
+            //iPer.setState(this, false);
         }
 
         return output;
@@ -131,7 +131,7 @@ public class Perceptron {
     public double think () {
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
-            iPer.setState(this, true);
+            //iPer.setState(this, true);
         }
 
         // ---------- PROCESS INPUTS ---------- //
@@ -146,7 +146,7 @@ public class Perceptron {
 
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
-            iPer.setState(this, false);
+            //iPer.setState(this, false);
         }
 
         return output;

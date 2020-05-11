@@ -19,6 +19,13 @@ public class Node extends Perceptron {
         this.OUTPUT_NODES = new ArrayList<>();
     }
 
+    public Node(String NAME, double lr, INode iNode) {
+        super(lr);
+        this.NAME = NAME;
+        this.INPUT_NODES = new ArrayList<>();
+        this.OUTPUT_NODES = new ArrayList<>();
+    }
+
 
     // GETTERS
     public String getNAME() {
@@ -39,16 +46,27 @@ public class Node extends Perceptron {
 
 
     // SETTERS
-    public void setInputNode (String name) {
+    public void setInputNode(String name) {
         this.INPUT_NODES.add(name);
     }
 
-    public void setOutputNode (String name) {
+    public void setOutputNode(String name) {
         this.OUTPUT_NODES.add(name);
     }
 
     public void setPartialError(double partialError) {
         this.partialError = partialError;
+    }
+
+
+    // METHODS
+    public void fromPerceptron (Perceptron perceptron) {
+        this.tInputs = perceptron.getTInputs();
+        this.tOutput = perceptron.getTOutput();
+        this.output = perceptron.getOutput();
+        this.weights = perceptron.getWeights();
+        this.biasWeight = perceptron.getBiasWeight();
+        this.lr = perceptron.getLr();
     }
 
 

@@ -1,21 +1,24 @@
 package com.acosta.neural_net.debug_interface.views;
 
-import com.acosta.neural_net.perceptron.IPerceptron;
-import com.acosta.neural_net.perceptron.Perceptron;
+import com.acosta.neural_net.NeuralNet;
+import com.acosta.neural_net.INeuralNet;
+import com.acosta.neural_net.perceptron.Node;
 import com.acosta.neural_net.debug_interface.components.*;
+import com.acosta.neural_net.perceptron.Perceptron;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class Debug extends Frame implements IPerceptron {
+public class Debug extends Frame implements INeuralNet {
 
     // DEBUGGING ATTRIBUTES
     private int nanosDelay;
 
     // PERCEPTRON ATTRIBUTES
-    private ArrayList<Perceptron> perceptrons;
-    private ArrayList<Boolean> states;
+    //private ArrayList<Perceptron> perceptrons;
+    //private ArrayList<Boolean> states;
+    private NeuralNet net;
 
 
     // CONSTRUCTOR
@@ -23,8 +26,9 @@ public class Debug extends Frame implements IPerceptron {
         super("Debug");
 
         this.nanosDelay = nanosDelay;
-        perceptrons = new ArrayList<>();
-        states = new ArrayList<>();
+        this.net = null;
+        //perceptrons = new ArrayList<>();
+        //states = new ArrayList<>();
 
         frame.getContentPane().add(this);
         frame.pack();
@@ -36,25 +40,39 @@ public class Debug extends Frame implements IPerceptron {
 
     // METHODS
     private void draw (Graphics g) {
-        int previousHeight = 0;
+        int previousDataHeight = 0;
+        int previousDataWidth = 0;
 
-        for (Perceptron perceptron : perceptrons) {
-            // DRAW A DATA COMPONENT
-            Data data = new Data(0, previousHeight, 2, g);
-            data.setPerceptron(perceptron);
-            previousHeight = data.getHeight();
+        int previousSchemeHeight = 5000;
+        int previousSchemeWidth = 0;
 
-            // DRAW A SCHEME COMPONENT
-            Scheme scheme = new Scheme(data.getWidth(), 0, 2, g);
-            scheme.setPerceptron(perceptron);
-            scheme.setState(states.get(perceptrons.indexOf(perceptron)));
+        if (net != null) {
+            for (int i = 0; i < net.getLAYERS().size(); i++) {
+                for (int j = 0; j < net.getLAYERS().get(i).size(); j++) {
+                    Node node = net.getLAYERS().get(i).get(j);
 
-            // DRAW AN ITERATION COMPONENT
-            // TODO: ITERATION COMPONENT
-            /*
-            Iteration iteration = new Iteration(scheme.getX() + scheme.getWidth() / 3, scheme.getY(), 1, g);
-            iteration.setPerceptron(perceptron);
-             */
+                    // DRAW A DATA COMPONENT
+                    Data data = new Data(i * previousDataWidth, j * previousDataHeight, 2, g);
+                    data.setPerceptron(node);
+                    previousDataHeight = data.getHeight();
+                    previousDataWidth = data.getWidth();
+
+                    // DRAW A SCHEME COMPONENT
+                    Scheme scheme = new Scheme((i + 1) * previousSchemeHeight, (j + 1) * previousSchemeWidth, 2, g);
+                    scheme.setPerceptron(node);
+                    //scheme.setState(states.get(perceptrons.indexOf(perceptron)));
+                    scheme.setState(true);
+                    previousSchemeHeight = scheme.getHeight();
+                    previousSchemeWidth = scheme.getWidth();
+
+                    // DRAW AN ITERATION COMPONENT
+                    // TODO: ITERATION COMPONENT
+                    /*
+                    Iteration iteration = new Iteration(scheme.getX() + scheme.getWidth() / 3, scheme.getY(), 1, g);
+                    iteration.setPerceptron(perceptron);
+                     */
+                }
+            }
         }
     }
 
@@ -67,16 +85,31 @@ public class Debug extends Frame implements IPerceptron {
     }
 
     @Override
-    public void updatePerceptron (Perceptron p, boolean addDelay) {
-        if (perceptrons.contains(p))
-            perceptrons.set(perceptrons.indexOf(p), p);
-        else {
-            perceptrons.add(p);
-            states.add(false);
+    public void updatePerceptron(Perceptron p, boolean addDelay) {
+        for (ArrayList<Node> layer : net.getLAYERS()) {
+            for (int i = 0; i < layer.size(); i++) {
+                if (layer.get(i).equals(p))
+                    layer.get(i).fromPerceptron(p);
+            }
         }
 
         if (addDelay)
             wait(frame::repaint);
+    }
+
+    @Override
+    public void updateNode (Node n, boolean addDelay) {
+        if (net.getNode(n.getNAME()) != null)
+            net.setNode(n.getNAME(), n);
+
+        if (addDelay)
+            wait(frame::repaint);
+    }
+
+    @Override
+    public void setState(Node n, boolean state) {
+        //this.states.set(perceptrons.indexOf(p), state);
+        //wait(frame::repaint);
     }
 
     @Override
@@ -95,8 +128,10 @@ public class Debug extends Frame implements IPerceptron {
     }
 
     @Override
-    public void setState (Perceptron p, boolean state) {
-        this.states.set(perceptrons.indexOf(p), state);
-        wait(frame::repaint);
+    public void updateNeuralNet(NeuralNet nn, boolean addDelay) {
+        this.net = nn;
+
+        if (addDelay)
+            wait(frame::repaint);
     }
 }

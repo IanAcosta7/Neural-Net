@@ -18,6 +18,9 @@ public class NeuralNet {
 
     private double cost;
 
+    // DEBUG ATTRIBUTES
+    private INeuralNet iNet;
+
 
     // CONSTRUCTOR
     public NeuralNet (int[] layers) {
@@ -33,14 +36,45 @@ public class NeuralNet {
         initLayers(layers);
     }
 
+    public NeuralNet (int[] layers, INeuralNet iNet) {
+        this.LAYERS = new ArrayList<>();
+        this.iterations = 0;
+
+        netTInputs = null;
+        netTOutputs = null;
+        outputs = null;
+
+        cost = 0;
+
+        this.iNet = iNet;
+
+        initLayers(layers);
+    }
+
 
     // GETTERS
+    public ArrayList<ArrayList<Node>> getLAYERS() {
+        return LAYERS;
+    }
+
+    public double[] getNetTInputs() {
+        return netTInputs;
+    }
+
+    public double[] getNetTOutputs() {
+        return netTOutputs;
+    }
+
     public int getIterations() {
         return iterations;
     }
 
     public double getCost() {
         return cost;
+    }
+
+    public double[] getOutputs() {
+        return outputs;
     }
 
     // SETTERS
@@ -67,6 +101,9 @@ public class NeuralNet {
             }
             perceptron.setTInputs(newInputs);
         }
+
+        if (iNet != null)
+            iNet.updateNeuralNet(this, true);
     }
 
     public void setOutputs (double[] newOutputs) {
@@ -83,6 +120,9 @@ public class NeuralNet {
                 }
             }
         }
+
+        if (iNet != null)
+            iNet.updateNeuralNet(this, true);
     }
 
 
@@ -94,9 +134,12 @@ public class NeuralNet {
                 StringBuilder strBuilder = new StringBuilder();
                 strBuilder.append(i);
                 strBuilder.append(j);
-                this.LAYERS.get(i).add(new Node(strBuilder.toString(), 0.5));
+                this.LAYERS.get(i).add(new Node(strBuilder.toString(), 0.5, iNet));
             }
         }
+
+        if (iNet != null)
+            iNet.updateNeuralNet(this, true);
     }
 
     public void train (double[][] newInputs, double[][] newOutputs) {
@@ -205,17 +248,26 @@ public class NeuralNet {
             getNode(taker).setInputNode(giver);
     }
 
-    private Node getNode (String name) {
+    public Node getNode (String name) {
         Node result = null;
 
         for (ArrayList<Node> layer : LAYERS) {
-            for (Node perceptron : layer) {
-                if (perceptron.getNAME().equals(name))
-                    result = perceptron;
+            for (Node node : layer) {
+                if (node.getNAME().equals(name))
+                    result = node;
             }
         }
 
         return result;
+    }
+
+    public void setNode (String name, Node node) {
+        for (ArrayList<Node> layer : LAYERS) {
+            for (int i = 0; i < layer.size(); i++) {
+                if (layer.get(i).getNAME().equals(name))
+                     layer.set(i, node);
+            }
+        }
     }
 
     private void backpropagate () {
