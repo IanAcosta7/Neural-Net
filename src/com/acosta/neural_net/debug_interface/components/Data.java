@@ -10,18 +10,18 @@ public final class Data extends Component {
     private int xPointer;
     private int yPointer;
     private int separation;
-    private Graphics g;
     private Perceptron perceptron;
 
     // CONSTRUCTOR
-    public Data(int x, int y, int size, Graphics graphics) {
-        super(x, y, 0, 0);
+    public Data(int x, int y, int size, Graphics g) {
+        super(x, y, 0, 0, g);
 
         size *= 10;
         this.xPointer = x + size;
         this.yPointer = y + size;
         this.separation = size;
-        this.g = graphics;
+
+        this.perceptron = null;
     }
 
 
@@ -30,14 +30,15 @@ public final class Data extends Component {
         this.perceptron = per;
         if (per.getTInputs() != null) {
             super.setWidth(separation * 7);
-            super.setHeight(separation * per.getTInputs().length);
+            super.setHeight(separation * per.getTInputs().length + separation);
         }
-        drawData();
+        draw();
     }
 
 
     // METHODS
-    private void drawData () {
+    @Override
+    public void draw() {
         DecimalFormat formatter = new DecimalFormat("0.00");
 
         if (perceptron.getTInputs() != null && perceptron.getWeights() != null && !Double.isNaN(perceptron.getOutput())) {
@@ -52,5 +53,7 @@ public final class Data extends Component {
             // Draw output
             g.drawString(formatter.format(perceptron.getOutput()), xPointer + separation * 4, yPointer);
         }
+
+        drawBorders();
     }
 }

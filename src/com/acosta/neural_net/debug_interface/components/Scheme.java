@@ -9,20 +9,18 @@ public class Scheme extends Component {
     private int xPointer;
     private int yPointer;
     private int separation;
-    private Graphics g;
     private Perceptron perceptron;
     private boolean state;
 
 
     // CONSTRUCTOR
-    public Scheme (int x, int y, int size, Graphics graphics) {
-        super(x, y, 0, 0);
+    public Scheme (int x, int y, int size, Graphics g) {
+        super(x, y, 0, 0, g);
 
         size *= 10;
         this.xPointer = x + size;
         this.yPointer = y + size;
         this.separation = size;
-        this.g = graphics;
         this.state = false;
     }
 
@@ -34,17 +32,18 @@ public class Scheme extends Component {
             super.setWidth(separation * 9);
             super.setHeight(separation * per.getTInputs().length);
         }
-        drawScheme();
+        draw();
     }
 
     public void setState(boolean state) {
         this.state = state;
-        drawScheme();
+        draw();
     }
 
 
     // METHODS
-    public void drawScheme () {
+    @Override
+    public void draw() {
         if (perceptron.getTInputs() != null && perceptron.getWeights() != null && !Double.isNaN(perceptron.getOutput())) {
             for (int i = 0; i < perceptron.getTInputs().length; i++) {
                 // Draw Inputs

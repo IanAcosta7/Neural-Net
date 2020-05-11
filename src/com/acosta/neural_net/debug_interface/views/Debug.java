@@ -49,21 +49,19 @@ public class Debug extends Frame implements INeuralNet {
         if (net != null) {
             for (int i = 0; i < net.getLAYERS().size(); i++) {
                 for (int j = 0; j < net.getLAYERS().get(i).size(); j++) {
-                    Node node = net.getLAYERS().get(i).get(j);
-
                     // DRAW A DATA COMPONENT
-                    Data data = new Data(i * previousDataWidth, j * previousDataHeight, 2, g);
-                    data.setPerceptron(node);
-                    previousDataHeight = data.getHeight();
-                    previousDataWidth = data.getWidth();
+                    NetData netData = new NetData(0, 0, 2, g);
+                    netData.setNeuralNet(net);
 
                     // DRAW A SCHEME COMPONENT
+                    /*
                     Scheme scheme = new Scheme((i + 1) * previousSchemeHeight, (j + 1) * previousSchemeWidth, 2, g);
                     scheme.setPerceptron(node);
                     //scheme.setState(states.get(perceptrons.indexOf(perceptron)));
                     scheme.setState(true);
                     previousSchemeHeight = scheme.getHeight();
                     previousSchemeWidth = scheme.getWidth();
+                    */
 
                     // DRAW AN ITERATION COMPONENT
                     // TODO: ITERATION COMPONENT

@@ -10,16 +10,20 @@ public class Iteration extends Component{
     private int xPointer;
     private int yPointer;
     private int separation;
-    private Graphics g;
     private Perceptron perceptron;
 
     // CONSTRUCTOR
-    public Iteration (int x, int y, int size, Graphics graphics) {
-        super(x, y, 0, 0);
+    public Iteration (int x, int y, int size, Graphics g) {
+        super(x, y, 0, 0, g);
         this.separation = size * 10;
-        this.g = graphics;
+
         this.xPointer = x + separation;
         this.yPointer = y + separation;
+    }
+
+    @Override
+    public void draw() {
+
     }
 
 
