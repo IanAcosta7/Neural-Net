@@ -64,8 +64,10 @@ public class NetScheme extends Component {
                         for (int k = 0; k < node.getINPUT_NODES().size(); k++) {
                             Color prevColor = g.getColor();
 
-                            if (node.getInputs() != null && node.getInputs()[k] >= 0.5)
-                                g.setColor(Color.GREEN);
+                            if (node.getInputs() != null && node.getInputs()[k] >= 0.5) {
+                                int value = (int)(255 - node.getInputs()[k] * 255);
+                                g.setColor(new Color(value, 255, value));
+                            }
 
                             g.drawLine(
                                     xPointer + i * inputSize,
@@ -80,8 +82,10 @@ public class NetScheme extends Component {
                     // DRAW NODE
                     Color prevColor = g.getColor();
 
-                    if (!Double.isNaN(node.getOutput()) && node.getOutput() >= 0.5)
-                        g.setColor(Color.GREEN);
+                    if (!Double.isNaN(node.getOutput()) && node.getOutput() >= 0.5) {
+                        int value = (int)(255 - node.getOutput() * 255);
+                        g.setColor(new Color(value, 255, value));
+                    }
 
                     g.fillOval(
                             nodeX - ovalSize / 2,
@@ -104,8 +108,10 @@ public class NetScheme extends Component {
                 // DRAW LAST LINES
                 Color prevColor = g.getColor();
 
-                if (net.getOutputs() != null && net.getOutputs()[i] >= 0.5)
-                    g.setColor(Color.GREEN);
+                if (net.getOutputs() != null && net.getOutputs()[i] >= 0.5) {
+                    int value = (int) (255 - net.getOutputs()[i] * 255);
+                    g.setColor(new Color(value, 255, value));
+                }
 
                 g.drawLine(xPointer,
                         yPointer + i * inputSize + inputSize / 2,
