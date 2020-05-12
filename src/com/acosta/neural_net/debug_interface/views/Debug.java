@@ -30,6 +30,7 @@ public class Debug extends Frame implements INeuralNet {
         //perceptrons = new ArrayList<>();
         //states = new ArrayList<>();
 
+        frame.setBackground(Color.BLACK);
         frame.getContentPane().add(this);
         frame.pack();
         frame.setSize(800, 800);
@@ -44,14 +45,16 @@ public class Debug extends Frame implements INeuralNet {
         if (net != null) {
             for (int i = 0; i < net.getLAYERS().size(); i++) {
                 for (int j = 0; j < net.getLAYERS().get(i).size(); j++) {
+                    g.setColor(Color.WHITE);
+
                     // DRAW A DATA COMPONENT
-                    NetData netData = new NetData(0, 0, 2, g);
+                    NetData netData = new NetData(0, 0, 3, g);
                     netData.setNeuralNet(net);
                     netData.setDrawBorders(true);
                     netData.draw();
 
                     // DRAW A SCHEME COMPONENT
-                    NetScheme netScheme = new NetScheme(netData.getWidth(), 0, 2, g);
+                    NetScheme netScheme = new NetScheme(netData.getWidth(), 0, 3, g);
                     netScheme.setNeuralNet(net);
                     netScheme.setDrawBorders(true);
                     netScheme.draw();

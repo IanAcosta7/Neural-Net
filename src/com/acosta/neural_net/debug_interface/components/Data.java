@@ -12,6 +12,8 @@ public final class Data extends Component {
     private int separation;
     private Perceptron perceptron;
 
+    private boolean drawBorders;
+
     // CONSTRUCTOR
     public Data(int x, int y, int size, Graphics g) {
         super(x, y, 0, 0, g);
@@ -35,6 +37,9 @@ public final class Data extends Component {
         draw();
     }
 
+    public void setDrawBorders(boolean drawBorders) {
+        this.drawBorders = drawBorders;
+    }
 
     // METHODS
     @Override
@@ -54,6 +59,7 @@ public final class Data extends Component {
             g.drawString(formatter.format(perceptron.getOutput()), xPointer + separation * 4, yPointer);
         }
 
-        drawBorders();
+        if (drawBorders)
+            drawBorders();
     }
 }
