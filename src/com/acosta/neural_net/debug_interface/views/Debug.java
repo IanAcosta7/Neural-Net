@@ -40,11 +40,6 @@ public class Debug extends Frame implements INeuralNet {
 
     // METHODS
     private void draw (Graphics g) {
-        int previousDataHeight = 0;
-        int previousDataWidth = 0;
-
-        int previousSchemeHeight = 5000;
-        int previousSchemeWidth = 0;
 
         if (net != null) {
             for (int i = 0; i < net.getLAYERS().size(); i++) {
@@ -52,16 +47,14 @@ public class Debug extends Frame implements INeuralNet {
                     // DRAW A DATA COMPONENT
                     NetData netData = new NetData(0, 0, 2, g);
                     netData.setNeuralNet(net);
+                    netData.setDrawBorders(true);
+                    netData.draw();
 
                     // DRAW A SCHEME COMPONENT
-                    /*
-                    Scheme scheme = new Scheme((i + 1) * previousSchemeHeight, (j + 1) * previousSchemeWidth, 2, g);
-                    scheme.setPerceptron(node);
-                    //scheme.setState(states.get(perceptrons.indexOf(perceptron)));
-                    scheme.setState(true);
-                    previousSchemeHeight = scheme.getHeight();
-                    previousSchemeWidth = scheme.getWidth();
-                    */
+                    NetScheme netScheme = new NetScheme(netData.getWidth(), 0, 2, g);
+                    netScheme.setNeuralNet(net);
+                    netScheme.setDrawBorders(true);
+                    netScheme.draw();
 
                     // DRAW AN ITERATION COMPONENT
                     // TODO: ITERATION COMPONENT

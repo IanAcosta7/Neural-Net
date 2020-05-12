@@ -8,6 +8,7 @@ import java.awt.*;
 public class NetData extends Component {
     private NeuralNet net;
     private int size;
+    private boolean drawBorders;
 
     public NetData(int x, int y, int size, Graphics g) {
         super(x, y, 0, 0, g);
@@ -17,13 +18,10 @@ public class NetData extends Component {
 
     public void setNeuralNet (NeuralNet net) {
         this.net = net;
-        /*
-        if (net.getNetTInputs() != null) {
-            super.setWidth(size * (net.getLAYERS().size() * 20)); //TODO: CHANGE 20
-            super.setHeight(size * (net.getNetTInputs().length * 20)); //TODO: FOR SIZE OF PER
-        }
-        */
-        draw();
+    }
+
+    public void setDrawBorders(boolean drawBorders) {
+        this.drawBorders = drawBorders;
     }
 
     @Override
@@ -53,6 +51,7 @@ public class NetData extends Component {
                 height = layerHeight;
         }
 
-        drawBorders();
+        if (drawBorders)
+            drawBorders();
     }
 }
