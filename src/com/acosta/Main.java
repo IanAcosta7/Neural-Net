@@ -29,8 +29,7 @@ public class Main {
                 {0}
         };
 
-        Debug debug = new Debug(500);
-        NeuralNet net = new NeuralNet(hiddenLayers, debug);
+        NeuralNet net = new NeuralNet(hiddenLayers);
 
         // Connections
         net.connect("0", "00");
@@ -51,6 +50,9 @@ public class Main {
                 {1, 0},
                 {1, 1}
         };
+
+        Debug debug = new Debug(500);
+        net.setINet(debug);
 
         double finalOutputs[][] = net.think(newInputs);
 

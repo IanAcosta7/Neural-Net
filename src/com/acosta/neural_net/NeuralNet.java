@@ -125,6 +125,9 @@ public class NeuralNet {
             iNet.updateNeuralNet(this, true);
     }
 
+    public void setINet (INeuralNet iNet) {
+        this.iNet = iNet;
+    }
 
     // METHODS
     private void initLayers (int[] layers) {
