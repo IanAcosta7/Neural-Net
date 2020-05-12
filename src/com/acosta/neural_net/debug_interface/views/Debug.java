@@ -33,7 +33,7 @@ public class Debug extends Frame implements INeuralNet {
         frame.setBackground(Color.BLACK);
         frame.getContentPane().add(this);
         frame.pack();
-        frame.setSize(800, 800);
+        frame.setSize(1280, 720);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

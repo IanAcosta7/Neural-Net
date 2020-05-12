@@ -36,7 +36,7 @@ public class NetData extends Component {
             for (int j = 0; j < net.getLAYERS().get(i).size(); j++) {
                 Node node = net.getLAYERS().get(i).get(j);
 
-                Data data = new Data(i * prevWidth, j * prevHeight, 2, g);
+                Data data = new Data(i * prevWidth, j * prevHeight, size, g);
                 data.setPerceptron(node);
 
                 prevWidth = data.getWidth();
