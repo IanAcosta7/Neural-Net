@@ -1,5 +1,7 @@
 package com.acosta.neural_net.perceptron;
 
+import com.acosta.neural_net.debug_interface.IPerceptron;
+
 import java.util.Random;
 
 public class Perceptron {
@@ -13,7 +15,7 @@ public class Perceptron {
     protected double lr;
 
     // DEBUGGING OPTIONAL ATTRIBUTE
-    private INode iPer;
+    private IPerceptron iPer;
 
 
     // CONSTRUCTOR
@@ -27,7 +29,7 @@ public class Perceptron {
         this.iPer = null;
     }
 
-    public Perceptron(double lr, INode iPer) {
+    public Perceptron(double lr, IPerceptron iPer) {
         this.tInputs = null;
         this.tOutput = 0;
         this.output = Double.NaN;
@@ -89,7 +91,7 @@ public class Perceptron {
         this.lr = lr;
     }
 
-    public void setIPer(INode iPer) {
+    public void setIPer(IPerceptron iPer) {
         this.iPer = iPer;
     }
 

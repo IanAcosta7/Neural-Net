@@ -1,5 +1,6 @@
 package com.acosta.neural_net;
 
+import com.acosta.neural_net.debug_interface.INeuralNet;
 import com.acosta.neural_net.perceptron.Perceptron;
 import com.acosta.neural_net.perceptron.Node;
 
@@ -101,9 +102,6 @@ public class NeuralNet {
             }
             perceptron.setTInputs(newInputs);
         }
-
-        if (iNet != null)
-            iNet.updateNeuralNet(this, true);
     }
 
     public void setOutputs (double[] newOutputs) {
@@ -120,9 +118,6 @@ public class NeuralNet {
                 }
             }
         }
-
-        if (iNet != null)
-            iNet.updateNeuralNet(this, true);
     }
 
     public void setINet (INeuralNet iNet) {
@@ -137,12 +132,9 @@ public class NeuralNet {
                 StringBuilder strBuilder = new StringBuilder();
                 strBuilder.append(i);
                 strBuilder.append(j);
-                this.LAYERS.get(i).add(new Node(strBuilder.toString(), 0.5, iNet));
+                this.LAYERS.get(i).add(new Node(strBuilder.toString(), 0.5));
             }
         }
-
-        if (iNet != null)
-            iNet.updateNeuralNet(this, true);
     }
 
     public void train (double[][] newInputs, double[][] newOutputs) {
@@ -201,6 +193,9 @@ public class NeuralNet {
             }
         }
 
+        if (iNet != null)
+            iNet.updateNeuralNet(this, true);
+
         return outputs;
     }
 
@@ -231,6 +226,10 @@ public class NeuralNet {
                 }
             }
         }
+
+        if (iNet != null)
+            iNet.updateNeuralNet(this, true);
+
         return outputs;
     }
 

@@ -1,7 +1,7 @@
 package com.acosta.neural_net.debug_interface.views;
 
 import com.acosta.neural_net.NeuralNet;
-import com.acosta.neural_net.INeuralNet;
+import com.acosta.neural_net.debug_interface.INeuralNet;
 import com.acosta.neural_net.perceptron.Node;
 import com.acosta.neural_net.debug_interface.components.*;
 import com.acosta.neural_net.perceptron.Perceptron;
@@ -15,9 +15,6 @@ public class Debug extends Frame implements INeuralNet {
     // DEBUGGING ATTRIBUTES
     private int nanosDelay;
 
-    // PERCEPTRON ATTRIBUTES
-    //private ArrayList<Perceptron> perceptrons;
-    //private ArrayList<Boolean> states;
     private NeuralNet net;
 
 
@@ -27,8 +24,6 @@ public class Debug extends Frame implements INeuralNet {
 
         this.nanosDelay = nanosDelay;
         this.net = null;
-        //perceptrons = new ArrayList<>();
-        //states = new ArrayList<>();
 
         frame.setBackground(Color.BLACK);
         frame.getContentPane().add(this);
@@ -71,41 +66,14 @@ public class Debug extends Frame implements INeuralNet {
     }
 
 
-    // OVERWRITTEN METHODS
+    // SUPER METHODS
     @Override
     public void paintComponent(Graphics g) {
         // Here we can draw things
         draw(g);
     }
 
-    @Override
-    public void updatePerceptron(Perceptron p, boolean addDelay) {
-        for (ArrayList<Node> layer : net.getLAYERS()) {
-            for (int i = 0; i < layer.size(); i++) {
-                if (layer.get(i).equals(p))
-                    layer.get(i).fromPerceptron(p);
-            }
-        }
-
-        if (addDelay)
-            wait(frame::repaint);
-    }
-
-    @Override
-    public void updateNode (Node n, boolean addDelay) {
-        if (net.getNode(n.getNAME()) != null)
-            net.setNode(n.getNAME(), n);
-
-        if (addDelay)
-            wait(frame::repaint);
-    }
-
-    @Override
-    public void setState(Node n, boolean state) {
-        //this.states.set(perceptrons.indexOf(p), state);
-        //wait(frame::repaint);
-    }
-
+    // INTERFACE METHODS
     @Override
     public void wait(Runnable callback) {
         try {

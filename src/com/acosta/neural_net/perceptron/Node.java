@@ -19,13 +19,6 @@ public class Node extends Perceptron {
         this.OUTPUT_NODES = new ArrayList<>();
     }
 
-    public Node(String NAME, double lr, INode iNode) {
-        super(lr);
-        this.NAME = NAME;
-        this.INPUT_NODES = new ArrayList<>();
-        this.OUTPUT_NODES = new ArrayList<>();
-    }
-
 
     // GETTERS
     public String getNAME() {

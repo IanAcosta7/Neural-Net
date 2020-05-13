@@ -53,7 +53,7 @@ public class Main {
                 {1, 1}
         };
 
-        Debug debug = new Debug(500);
+        Debug debug = new Debug(5000);
         net.setINet(debug);
 
         double finalOutputs[][] = net.think(newInputs);
