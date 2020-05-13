@@ -55,11 +55,9 @@ public class Debug extends Frame implements INeuralNet {
                     netScheme.draw();
 
                     // DRAW AN ITERATION COMPONENT
-                    // TODO: ITERATION COMPONENT
-                    /*
-                    Iteration iteration = new Iteration(scheme.getX() + scheme.getWidth() / 3, scheme.getY(), 1, g);
-                    iteration.setPerceptron(perceptron);
-                     */
+                    NetIteration netIteration = new NetIteration(netScheme.getX(), netScheme.getHeight() + 20, 4, g);
+                    netIteration.setNeuralNet(net);
+                    netIteration.draw();
                 }
             }
         }

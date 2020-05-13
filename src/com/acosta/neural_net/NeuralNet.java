@@ -12,6 +12,7 @@ public class NeuralNet {
     // ATTRIBUTES
     private final ArrayList<ArrayList<Node>> LAYERS;
     private int iterations;
+    private int currentIteration;
 
     private double[] netTInputs;
     private double[] netTOutputs;
@@ -27,6 +28,7 @@ public class NeuralNet {
     public NeuralNet (int i, int o, int[] layers) {
         this.LAYERS = new ArrayList<>();
         this.iterations = 0;
+        this.currentIteration = 0;
 
         this.netTInputs = new double[i];
         this.netTOutputs = new double[o];
@@ -40,6 +42,7 @@ public class NeuralNet {
     public NeuralNet (int i, int o, int[] layers, INeuralNet iNet) {
         this.LAYERS = new ArrayList<>();
         this.iterations = 0;
+        this.currentIteration = 0;
 
         this.netTInputs = new double[i];
         this.netTOutputs = new double[o];
@@ -68,6 +71,10 @@ public class NeuralNet {
 
     public int getIterations() {
         return iterations;
+    }
+
+    public int getCurrentIteration() {
+        return currentIteration;
     }
 
     public double getCost() {
@@ -144,6 +151,8 @@ public class NeuralNet {
 
         if (newInputs.length == newOutputs.length) {
             for (int i = 0; i < iterations; i++) {
+                currentIteration = i + 1;
+
                 //Train a random set of inputs
                 int number = rand.nextInt(newInputs.length);
 
