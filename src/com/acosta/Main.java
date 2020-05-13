@@ -31,16 +31,7 @@ public class Main {
 
         //Debug debug = new Debug(500);
         //NeuralNet net = new NeuralNet(hiddenLayers, debug);
-        NeuralNet net = new NeuralNet(hiddenLayers);
-
-        // Connections
-        net.connect("0", "00");
-        net.connect("0", "01");
-        net.connect("1", "00");
-        net.connect("1", "01");
-        net.connect("00", "10");
-        net.connect("01", "10");
-        net.connect("10", "0");
+        NeuralNet net = new NeuralNet(inputs[0].length, outputs[0].length, hiddenLayers);
 
         net.setIterations(20000);
 

@@ -24,28 +24,28 @@ public class NeuralNet {
 
 
     // CONSTRUCTOR
-    public NeuralNet (int[] layers) {
+    public NeuralNet (int i, int o, int[] layers) {
         this.LAYERS = new ArrayList<>();
         this.iterations = 0;
 
-        netTInputs = null;
-        netTOutputs = null;
-        outputs = null;
+        this.netTInputs = new double[i];
+        this.netTOutputs = new double[o];
+        this.outputs = new double[o];
 
-        cost = 0;
+        this.cost = 0;
 
         initLayers(layers);
     }
 
-    public NeuralNet (int[] layers, INeuralNet iNet) {
+    public NeuralNet (int i, int o, int[] layers, INeuralNet iNet) {
         this.LAYERS = new ArrayList<>();
         this.iterations = 0;
 
-        netTInputs = null;
-        netTOutputs = null;
-        outputs = null;
+        this.netTInputs = new double[i];
+        this.netTOutputs = new double[o];
+        this.outputs = new double[o];
 
-        cost = 0;
+        this.cost = 0;
 
         this.iNet = iNet;
 
@@ -135,6 +135,8 @@ public class NeuralNet {
                 this.LAYERS.get(i).add(new Node(strBuilder.toString(), 0.5));
             }
         }
+
+        connectAllNodes();
     }
 
     public void train (double[][] newInputs, double[][] newOutputs) {
@@ -243,11 +245,38 @@ public class NeuralNet {
         return finalOutputs;
     }
 
-    public void connect (String giver, String taker) {
+    public void connectNode (String giver, String taker) {
         if (getNode(giver) != null)
             getNode(giver).setOutputNode(taker);
         if (getNode(taker) != null)
             getNode(taker).setInputNode(giver);
+    }
+
+    private void connectAllNodes () {
+        // SET INPUT NODES
+        for (int i = 0; i < netTInputs.length; i++) {
+            // FOREACH NODE IN THE FIRST LAYER
+            for (Node nextLayerNode : LAYERS.get(0)) {
+                connectNode(Integer.toString(i), nextLayerNode.getNAME());
+            }
+        }
+
+        // SET HIDDEN CONNECTIONS
+        for (int i = 0; i < LAYERS.size() - 1; i++) {
+            for (Node node : LAYERS.get(i)) {
+                for (Node nextLayerNode : LAYERS.get(i + 1)) {
+                    connectNode(node.getNAME(), nextLayerNode.getNAME());
+                }
+            }
+        }
+
+        // SET OUTPUT NODES
+        for (int i = 0; i < netTOutputs.length; i++) {
+            // FOREACH NODE IN THE LAST LAYER
+            for (Node prevLayerNode : LAYERS.get(LAYERS.size() - 1)) {
+                connectNode(prevLayerNode.getNAME(), Integer.toString(i));
+            }
+        }
     }
 
     public Node getNode (String name) {
