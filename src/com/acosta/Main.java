@@ -29,6 +29,8 @@ public class Main {
                 {0}
         };
 
+        //Debug debug = new Debug(500);
+        //NeuralNet net = new NeuralNet(hiddenLayers, debug);
         NeuralNet net = new NeuralNet(hiddenLayers);
 
         // Connections

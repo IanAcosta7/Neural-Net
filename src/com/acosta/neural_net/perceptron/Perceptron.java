@@ -7,7 +7,6 @@ public class Perceptron {
     // ATTRIBUTES
     protected double[] tInputs;
     protected double tOutput;
-    protected double[] inputs;
     protected double output;
     protected double[] weights;
     protected double biasWeight;
@@ -46,10 +45,6 @@ public class Perceptron {
 
     public double getTOutput() {
         return tOutput;
-    }
-
-    public double[] getInputs() {
-        return inputs;
     }
 
     public double getOutput() {
@@ -110,7 +105,6 @@ public class Perceptron {
     }
 
     public double think (double[] inputs) {
-        this.inputs = inputs;
 
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
@@ -136,7 +130,6 @@ public class Perceptron {
     }
 
     public double think () {
-        this.inputs = tInputs;
 
         if (iPer != null) {
             iPer.updatePerceptron(this, true);
@@ -145,8 +138,8 @@ public class Perceptron {
 
         // ---------- PROCESS INPUTS ---------- //
         double z = 0;
-        for (int i = 0; i < inputs.length; i++) {
-            z += inputs[i] * weights[i];
+        for (int i = 0; i < tInputs.length; i++) {
+            z += tInputs[i] * weights[i];
         }
         z += biasWeight;
 

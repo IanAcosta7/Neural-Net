@@ -4,6 +4,7 @@ import com.acosta.neural_net.NeuralNet;
 import com.acosta.neural_net.perceptron.Node;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 
 public class NetScheme extends Component {
 
@@ -29,6 +30,7 @@ public class NetScheme extends Component {
     public void draw() {
         int xPointer = x;
         int yPointer = y;
+        DecimalFormat formatter = new DecimalFormat("0.00");
 
         FontMetrics fm = g.getFontMetrics();
         int inputSize = size * 3;
@@ -60,14 +62,17 @@ public class NetScheme extends Component {
                     // DRAW LINES
                     int nodeX = xPointer + inputSize + i * inputSize;
                     int nodeY = yPointer + j * inputSize + inputSize / 2;
-                    if (node.getINPUT_NODES() != null) {
-                        for (int k = 0; k < node.getINPUT_NODES().size(); k++) {
+                    if (node.getTInputs() != null) {
+                        for (int k = 0; k < node.getTInputs().length; k++) {
                             Color prevColor = g.getColor();
 
-                            if (node.getInputs() != null && node.getInputs()[k] >= 0.5) {
-                                int value = (int)(255 - node.getInputs()[k] * 255);
-                                g.setColor(new Color(value, 255, value));
-                            }
+                            /*
+                            int value = (int)(255 - node.getTInputs()[k] * 255);
+                            g.setColor(new Color(value, 255, value));
+                            */
+                            int value = (int)(node.getTInputs()[k] * 255);
+                            g.setColor(new Color(0, value, 0));
+
 
                             g.drawLine(
                                     xPointer + i * inputSize,
@@ -82,9 +87,13 @@ public class NetScheme extends Component {
                     // DRAW NODE
                     Color prevColor = g.getColor();
 
-                    if (!Double.isNaN(node.getOutput()) && node.getOutput() >= 0.5) {
+                    if (!Double.isNaN(node.getOutput())) {
+                        /*
                         int value = (int)(255 - node.getOutput() * 255);
                         g.setColor(new Color(value, 255, value));
+                         */
+                        int value = (int)(node.getOutput() * 255);
+                        g.setColor(new Color(0, value, 0));
                     }
 
                     g.fillOval(
@@ -103,14 +112,18 @@ public class NetScheme extends Component {
         }
 
         // DRAW OUTPUTS
-        if (net.getNetTOutputs() != null) {
-            for (int i = 0; i < net.getNetTOutputs().length; i++) {
+        if (net.getOutputs() != null) {
+            for (int i = 0; i < net.getOutputs().length; i++) {
                 // DRAW LAST LINES
                 Color prevColor = g.getColor();
 
-                if (net.getOutputs() != null && net.getOutputs()[i] >= 0.5) {
+                if (net.getOutputs() != null) {
+                    /*
                     int value = (int) (255 - net.getOutputs()[i] * 255);
                     g.setColor(new Color(value, 255, value));
+                     */
+                    int value = (int)(net.getOutputs()[i] * 255);
+                    g.setColor(new Color(0, value, 0));
                 }
 
                 g.drawLine(xPointer,
@@ -121,7 +134,7 @@ public class NetScheme extends Component {
                 g.setColor(prevColor);
 
                 // DRAW RECTANGLES
-                String text = Double.toString(net.getNetTOutputs()[i]);
+                String text = formatter.format(net.getOutputs()[i]);
 
                 g.drawString(text,
                         inputSize + (xPointer+ inputSize / 2 - fm.stringWidth(text) / 2),

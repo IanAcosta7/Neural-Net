@@ -48,15 +48,15 @@ public class Debug extends Frame implements INeuralNet {
                     g.setColor(Color.WHITE);
 
                     // DRAW A DATA COMPONENT
-                    NetData netData = new NetData(0, 0, 3, g);
+                    NetData netData = new NetData(0, 0, 4, g);
                     netData.setNeuralNet(net);
-                    netData.setDrawBorders(true);
+                    //netData.setDrawBorders(true);
                     netData.draw();
 
                     // DRAW A SCHEME COMPONENT
-                    NetScheme netScheme = new NetScheme(netData.getWidth(), 0, 3, g);
+                    NetScheme netScheme = new NetScheme(netData.getWidth(), 0, 4, g);
                     netScheme.setNeuralNet(net);
-                    netScheme.setDrawBorders(true);
+                    //netScheme.setDrawBorders(true);
                     netScheme.draw();
 
                     // DRAW AN ITERATION COMPONENT
